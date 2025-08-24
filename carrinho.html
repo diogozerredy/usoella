@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrinho - USOELLA</title>
+ <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-grid">
+      <a class="logo" href="index.html">USOELLA</a>
+      <nav class="nav">
+        <ul>
+          <li><a href="index.html#home">Home</a></li>
+          <li><a href="index.html#shop">Shop</a></li>
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Conteúdo -->
+  <main class="container" style="padding: 2rem 0;">
+    <h2>🛍️ Seu Carrinho</h2>
+    <div id="cart-items" class="cart-list"></div>
+    <p><strong>Subtotal:</strong> R$ <span id="subtotal">0,00</span></p>
+    <a href="checkout.html" class="btn btn-primary">Finalizar compra</a>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 USOELLA. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script>
+    // Chama a função já definida no script.js
+    renderCart();
+  </script>
+</body>
+</html>

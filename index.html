@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>USOELLA — Moda delicada</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body style="background-color: rgba(191, 108, 151,0.8); display: flex; justify-content: center;">
+    <div class="overlay">
+    <header class="site-header">
+      <div class="container header-grid">
+        <a class="logo" href="#">USOELLA</a>
+
+        <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="primary-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav id="primary-nav" class="nav">
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#shop">Shop</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="home">
+      <!-- HERO / BANNER -->
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <h1 style="color: #fff;">Moda leticada,<br/> estilosa e feita<br/> para realçar<br/> sua beleza</h1>
+            <a href="#novidades" class="btn btn-primary" id="cta-comprar">COMPRE AGORA</a>
+          </div>
+          <div class="hero-media">
+            <!-- Placeholder livre para trocar depois -->
+            <img src="https://picsum.photos/id/1011/800/1000" alt="Modelo vestindo vestido rosa" />
+          </div>
+        </div>
+      </section>
+
+  <!-- NOVIDADES -->
+<section id="novidades" class="novidades">
+  <div class="container novidades-grid">
+    <h2>NOVIDADES</h2>
+
+    <div class="cards-grid">
+      <!-- Card 1 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://picsum.photos/id/1005/740/900" alt="Vestido floral"/>
+        </div>
+        <div class="card-body">
+          <h3>Vestido Floral Suave</h3>
+          <p class="price">R$ 229,30</p>
+         <button class="btn btn-outline btn-add-cart" 
+  data-product='{"id":"p1","name":"Vestido Floral Suave","price":229.30,"thumb":"https://picsum.photos/id/1005/100/120"}'>
+  Adicionar ao Carrinho
+</button>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://picsum.photos/id/1012/740/900" alt="Vestido rosa cruzado"/>
+        </div>
+        <div class="card-body">
+          <h3>Vestido Rosa Cruzado</h3>
+          <p class="price">R$ 249,30</p>
+          <button class="btn btn-outline btn-add-cart" 
+  data-product='{"id":"p1","name":"Vestido Floral Suave","price":229.30,"thumb":"https://picsum.photos/id/1012/100/120"}'>
+  Adicionar ao Carrinho
+</button>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://picsum.photos/id/1015/740/900" alt="Vestido verão"/>
+        </div>
+        <div class="card-body">
+          <h3>Vestido Verão Leve</h3>
+          <p class="price">R$ 199,90</p>
+          <button class="btn btn-outline btn-add-cart" 
+  data-product='{"id":"p1","name":"Vestido Floral Suave","price":229.30,"thumb":"https://picsum.photos/id/1015/100/120"}'>
+  Adicionar ao Carrinho
+</button>
+        </div>
+      </article>
+
+      <!-- Card 4 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://picsum.photos/id/1016/740/900" alt="Vestido branco"/>
+        </div>
+        <div class="card-body">
+          <h3>Vestido Branco Elegante</h3>
+          <p class="price">R$ 279,00</p>
+        <button class="btn btn-outline btn-add-cart" 
+  data-product='{"id":"p1","name":"Vestido Floral Suave","price":229.30,"thumb":"https://picsum.photos/id/1016/100/120"}'>
+  Adicionar ao Carrinho
+</button>
+        </div>
+      </article>
+    </div>
+
+    <!-- link direto pro carrinho -->
+    <div style="margin-top:2rem;">
+      <a href="carrinho.html" class="btn btn-primary">Ir para o Carrinho</a>
+    </div>
+  </div>
+</section>
+
+      <!-- SOBRE -->
+      <section id="about" class="sobre">
+        <div class="container sobre-grid">
+          <div class="sobre-texto">
+            <h2 style="color: #fff;">SOBRE A USOELLA</h2>
+            <p style="color: #fff;">
+              Nossa história começou em homenagem à nossa filha Ariella, que nos inspira a criar
+              roupas delicadas e estilosas. Aqui, valor e beleza são o que guiamos.
+            </p>
+          </div>
+          <div class="sobre-media">
+            <img src="https://picsum.photos/id/1027/740/900" alt="Mãe com bebê"/>
+          </div>
+        </div>
+      </section>
+
+      <section id="shop" class="espaco"></section>
+      <section id="contact" class="espaco"></section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© 2025 USOELLA. Todos os direitos reservados.</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+    </div>
+    <!-- Carrinho Flutuante -->
+<div id="floating-cart">
+  <button id="cart-button">
+    🛒 <span id="cart-count">0</span>
+  </button>
+  <div id="cart-dropdown" class="hidden">
+    <h4>Meu Carrinho</h4>
+    <div id="cart-dropdown-items"></div>
+    <a href="carrinho.html" class="btn btn-primary" style="margin-top:1rem; display:block;">Ver Carrinho</a>
+  </div>
+</div>g
+  </body>
+</html>
