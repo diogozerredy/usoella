@@ -1,6 +1,0 @@
-modificatnion
-preciso que ele veja meu site
-e veja uma forma de criar as categorias
-para que eu possa adicionar os produtos e nao precisar ficar programando os produtos
-
-dar uma melhorada no responsivo mobile pro carrinho/modal ficar ainda mais bonito em celular
