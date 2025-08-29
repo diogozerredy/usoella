@@ -1,5 +1,7 @@
 /data
 /images
+/germini
 *.png
 *.txt
-.gitignore
+gitignore
+*.log
