@@ -1,47 +1,84 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carrinho - USOELLA</title>
- <link rel="stylesheet" href="/css/style.css" />
-</head>
-<body>
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container header-grid">
-      <a class="logo" href="index.html">USOELLA</a>
-      <nav class="nav">
-        <ul>
-          <li><a href="index.html#home">Home</a></li>
-          <li><a href="index.html#shop">Shop</a></li>
-          <li><a href="index.html#about">About</a></li>
-          <li><a href="index.html#contact">Contact</a></li>
-        </ul>
-      </nav>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Carrinho - USOELLA</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body style="background-color: rgba(191, 108, 151,0.8);">
+     <header class="site-header">
+      <div class="container header-grid">
+        <a class="logo" href="#">USOELLA</a>
+
+        <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="primary-nav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav id="primary-nav" class="nav">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#shop">Shop</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    
+  <div class="container" style="padding: 2rem; background: white; margin: 2rem auto; border-radius: 10px; ">
+    <div class="container cart-page-container" style="background: white; margin: 2rem auto; border-radius: 10px; max-width: 800px;">
+      <h1>Meu Carrinho</h1>
+      
+       <div class="cart-layout">
+        <div id="cart-items-container">
+          <div class="cart-header">
+            <span class="header-product">Produto</span>
+            <span class="header-qty">Quantidade</span>
+            <span class="header-total">Total</span>
+          </div>
+          <div id="cart-items">
+            </div>
+        </div>
+
+        <div class="cart-summary-card">
+          <h3>Resumo do Pedido</h3>
+          <div class="summary-total">
+            <span>Total</span>
+            <span class="total-price">R$ <span id="subtotal">0.00</span></span>
+          </div>
+          <button onclick="sendWhatsAppOrder()" class="btn btn-primary btn-full">Finalizar Pedido</button>
+          <a href="index.html" class="btn-link">Continuar Comprando</a>
+        </div>
+      </div></div>
     </div>
-  </header>
 
-  <!-- Conteúdo -->
-  <main class="container" style="padding: 2rem 0;">
-    <h2>🛍️ Seu Carrinho</h2>
-    <div id="cart-items" class="cart-list"></div>
-    <p><strong>Subtotal:</strong> R$ <span id="subtotal">0,00</span></p>
-    <a href="checkout.html" class="btn btn-primary">Finalizar compra</a>
-  </main>
+    <!-- Modal de confirmação de remoção -->
+    <div id="remove-confirm-modal" class="cart-modal hidden">
+      <div class="cart-modal-content">
+        <h3>Remover item</h3>
+        <p id="remove-confirm-message">Deseja remover este item do carrinho?</p>
+        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+          <button id="remove-confirm-btn" class="btn btn-primary">Remover</button>
+          <button id="cancel-remove-btn" class="btn btn-outline">Cancelar</button>
+        </div>
+      </div>
+    </div>
 
-  <!-- Footer -->
-  <footer class="site-footer">
+    <footer class="site-footer">
     <div class="container">
       <p>© 2025 USOELLA. Todos os direitos reservados.</p>
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <script src="script.js"></script>
-  <script>
-    // Chama a função já definida no script.js
-    renderCart();
-  </script>
-</body>
+    <script src="js/script.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('Carregando carrinho...');
+        renderCart('cart-items', 'subtotal');
+      });
+    </script>
+  </body>
 </html>
+
+

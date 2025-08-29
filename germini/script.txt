@@ -3,34 +3,18 @@
 // ==========================
 const toggle = document.querySelector('.menu-toggle');
 const header = document.querySelector('.site-header');
-const menu = document.querySelector('#primary-nav');
 
-// Abrir/fechar menu ao clicar no toggle
-toggle?.addEventListener('click', (e) => {
-  e.stopPropagation(); // evita que o clique no toggle feche o menu imediatamente
+toggle?.addEventListener('click', () => {
   const isOpen = header.classList.toggle('menu-open');
   toggle.setAttribute('aria-expanded', String(isOpen));
 });
 
 // Fechar menu ao clicar em um link (mobile)
-menu.querySelectorAll('a').forEach(a => {
+document.querySelectorAll('#primary-nav a').forEach(a => {
   a.addEventListener('click', () => {
     header.classList.remove('menu-open');
     toggle?.setAttribute('aria-expanded', 'false');
   });
-});
-
-// Fechar menu ao clicar fora
-document.addEventListener('click', (e) => {
-  if (header.classList.contains('menu-open') && !header.contains(e.target)) {
-    header.classList.remove('menu-open');
-    toggle?.setAttribute('aria-expanded', 'false');
-  }
-});
-
-// Previne que cliques dentro do menu fechem ele
-menu.addEventListener('click', (e) => {
-  e.stopPropagation();
 });
 
 // CTA "Compre Agora" -> rolar até novidades
@@ -116,20 +100,18 @@ function renderCart(containerId = "cart-items", subtotalId = "subtotal") {
       subtotal += item.price * item.qty;
       container.innerHTML += `
         <div class="cart-item">
-          <img src="${item.thumb || 'https://via.placeholder.com/120'}" alt="${item.name}">
+          <img src="${item.thumb || 'https://via.placeholder.com/80'}" alt="${item.name}">
           <div class="cart-item-info">
-            <strong>${item.name}</strong>
-            <span>R$ ${item.price.toFixed(2)}</span>
+            <strong>${item.name}</strong><br>
+            R$ ${item.price.toFixed(2)}
           </div>
-          <div>
           <div class="cart-item-actions">
             <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
             <span>${item.qty}</span>
             <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+            <a href="#" onclick="event.preventDefault(); requestRemove('${item.id}')">Remover</a>
           </div>
-          <a href="#" onclick="event.preventDefault(); requestRemove('${item.id}')">Remover</a>
-          </div>
-          <div class="item-total"><strong>R$ ${(item.price * item.qty).toFixed(2)}</strong></div>
+          <div><strong>R$ ${(item.price * item.qty).toFixed(2)}</strong></div>
         </div>
       `;
     });
