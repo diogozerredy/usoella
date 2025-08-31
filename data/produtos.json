@@ -1,3 +1,22 @@
 {
-  "produtos": []
+  "produtos": [
+    {
+      "destaque": true,
+      "descricao": "calca jeans laggin",
+      "preco": 12,
+      "ativo": true,
+      "imagem": "/images/uploads/whatsapp-image-2025-08-27-at-6.12.05-pm.jpeg",
+      "categoria": "Outros",
+      "cores": [
+        "verde"
+      ],
+      "nome": "calca jeans",
+      "id": "12354565",
+      "createdAt": "2025-08-31T04:10:50.375Z",
+      "tamanhos": [
+        "p",
+        "m"
+      ]
+    }
+  ]
 }
