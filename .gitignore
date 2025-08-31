@@ -1,7 +1,8 @@
-/data
-/images
+
+/images/imgs
 /germini
 *.png
 *.txt
-gitignore
+.gitignore
 *.log
+/admin/index.html.bak
