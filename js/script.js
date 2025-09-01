@@ -1,26 +1,23 @@
 // ==========================
-// Menu mobile
+// MENU MOBILE
 // ==========================
 const toggle = document.querySelector('.menu-toggle');
 const header = document.querySelector('.site-header');
 const menu = document.querySelector('#primary-nav');
 
-// Abrir/fechar menu ao clicar no toggle
 toggle?.addEventListener('click', (e) => {
-  e.stopPropagation(); // evita que o clique no toggle feche o menu imediatamente
+  e.stopPropagation();
   const isOpen = header.classList.toggle('menu-open');
   toggle.setAttribute('aria-expanded', String(isOpen));
 });
 
-// Fechar menu ao clicar em um link (mobile)
-menu.querySelectorAll('a').forEach(a => {
+menu?.querySelectorAll('a').forEach(a => {
   a.addEventListener('click', () => {
     header.classList.remove('menu-open');
     toggle?.setAttribute('aria-expanded', 'false');
   });
 });
 
-// Fechar menu ao clicar fora
 document.addEventListener('click', (e) => {
   if (header.classList.contains('menu-open') && !header.contains(e.target)) {
     header.classList.remove('menu-open');
@@ -28,52 +25,245 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Previne que cliques dentro do menu fechem ele
-menu.addEventListener('click', (e) => {
-  e.stopPropagation();
-});
+menu?.addEventListener('click', (e) => e.stopPropagation());
 
-// CTA "Compre Agora" -> rolar até novidades
 document.getElementById('cta-comprar')?.addEventListener('click', (e) => {
   e.preventDefault();
   document.getElementById('novidades')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 // ==========================
-// Carrinho (LocalStorage)
+// CARRINHO - LOCALSTORAGE
 // ==========================
 function loadCart() {
-  return JSON.parse(localStorage.getItem('cart')) || [];
+  return JSON.parse(localStorage.getItem("cart")) || [];
 }
 
 function saveCart(cart) {
-  localStorage.setItem('cart', JSON.stringify(cart));
+  localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-function addToCart(product) {
-  let cart = loadCart();
-  const existing = cart.find(p => p.id === product.id);
+// ==========================
+// FUNÇÃO GENÉRICA DE RENDERIZAÇÃO
+// ==========================
+function renderCartGeneric({ containerId, totalId, isModal = false }) {
+  const cart = loadCart();
+  const container = document.getElementById(containerId);
+  const totalEl = document.getElementById(totalId);
+  if (!container || !totalEl) return;
+
+  container.innerHTML = "";
+  let total = 0;
+
+  if (cart.length === 0) {
+    container.innerHTML = "<p>Seu carrinho está vazio.</p>";
+  } else {
+    cart.forEach(item => {
+      total += item.price * item.qty;
+      if (isModal) {
+        container.innerHTML += `
+          <div class="cart-item-preview">
+            <img src="${item.thumb || 'https://via.placeholder.com/50'}" alt="${item.name}">
+            <div>
+              <strong>${item.name}</strong><br>
+              ${item.qty}x R$ ${item.price.toFixed(2)}
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML += `
+          <div class="cart-item">
+            <img src="${item.thumb || 'https://via.placeholder.com/120'}" alt="${item.name}">
+            <div class="cart-item-info">
+              <strong>${item.name}</strong>
+              <span>R$ ${item.price.toFixed(2)}</span>
+            </div>
+            <div>
+            <div class="cart-item-actions">
+              <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
+              <span>${item.qty}</span>
+              <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+              </div>
+              <a class="remover" href="#" onclick="event.preventDefault(); requestRemove('${item.id}')">Remover</a>
+              
+            </div>
+            <div class="item-total"><strong>R$ ${(item.price * item.qty).toFixed(2)}</strong></div>
+          </div>
+        `;
+      }
+    });
+  }
+
+  totalEl.textContent = total.toFixed(2);
+}
+
+// Helpers para chamadas claras
+function renderCart(containerId = "cart-items", totalId = "subtotal") {
+  renderCartGeneric({ containerId, totalId, isModal: false });
+}
+
+function renderCartModal() {
+  renderCartGeneric({ containerId: "cart-modal-items", totalId: "cart-modal-total", isModal: true });
+}
+
+// ==========================
+// CARRINHO FLUTUANTE
+// ==========================
+function updateFloatingCart() {
+  const cart = loadCart();
+  const countEl = document.getElementById("cart-count");
+  const dropdown = document.getElementById("cart-dropdown-items");
+
+  if (countEl) {
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    countEl.textContent = totalQty;
+  }
+
+  if (!dropdown) return;
+  dropdown.innerHTML = "";
+
+  if (cart.length === 0) {
+    dropdown.innerHTML = "<p>Seu carrinho está vazio.</p>";
+  } else {
+    cart.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "cart-dropdown-item";
+      div.innerHTML = `
+        <img src="${item.thumb || 'https://via.placeholder.com/50'}" alt="${item.name}">
+        <div>
+          <strong>${item.name}</strong><br>
+          ${item.qty}x R$ ${item.price.toFixed(2)}
+        </div>
+      `;
+      dropdown.appendChild(div);
+    });
+  }
+}
+
+// ==========================
+// MODAL DE PRODUTO (Shein-like)
+// ==========================
+let selectedProduct = null;
+let selectedColor = null;
+let selectedSize = null;
+
+function openProductModal(product) {
+  selectedProduct = product;
+  selectedColor = null;
+  selectedSize = null;
+
+  const modal = document.getElementById("produto-modal");
+  const nome = document.getElementById("modal-produto-nome");
+  const preco = document.getElementById("modal-produto-preco");
+  const img = document.getElementById("modal-produto-img");
+  const coresContainer = document.getElementById("modal-cores");
+  const tamanhosContainer = document.getElementById("modal-tamanhos");
+  const btnConfirmar = document.getElementById("confirmar-compra");
+
+  nome.textContent = product.nome;
+  preco.textContent = `R$ ${product.preco.toFixed(2)}`;
+  img.src = product.imagens?.[0] || "https://via.placeholder.com/200";
+
+  // Render cores
+  coresContainer.innerHTML = "";
+  if (product.cores?.length > 0) {
+    product.cores.forEach(cor => {
+      const btn = document.createElement("button");
+      btn.textContent = cor;
+      btn.classList.add("opcao-btn");
+      btn.onclick = () => {
+        selectedColor = cor;
+        document.querySelectorAll("#modal-cores .opcao-btn").forEach(b => b.classList.remove("ativo"));
+        btn.classList.add("ativo");
+        checkConfirm();
+      };
+      coresContainer.appendChild(btn);
+    });
+  } else {
+    coresContainer.innerHTML = "<p>Cor única</p>";
+    selectedColor = "Única";
+  }
+
+  // Render tamanhos
+  tamanhosContainer.innerHTML = "";
+  if (product.tamanhos?.length > 0) {
+    product.tamanhos.forEach(tamanho => {
+      const btn = document.createElement("button");
+      btn.textContent = tamanho;
+      btn.classList.add("opcao-btn");
+      btn.onclick = () => {
+        selectedSize = tamanho;
+        document.querySelectorAll("#modal-tamanhos .opcao-btn").forEach(b => b.classList.remove("ativo"));
+        btn.classList.add("ativo");
+        checkConfirm();
+      };
+      tamanhosContainer.appendChild(btn);
+    });
+  } else {
+    tamanhosContainer.innerHTML = "<p>Tamanho Único (M)</p>";
+    selectedSize = "Único (M)";
+  }
+
+  btnConfirmar.disabled = true;
+  modal.classList.remove("hidden");
+}
+
+function closeProductModal() {
+  document.getElementById("produto-modal").classList.add("hidden");
+}
+
+function checkConfirm() {
+  const btn = document.getElementById("confirmar-compra");
+  btn.disabled = !(selectedColor && selectedSize);
+}
+
+document.querySelector(".modal-close")?.addEventListener("click", closeProductModal);
+document.getElementById("confirmar-compra")?.addEventListener("click", () => {
+  if (!selectedProduct) return;
+
+  const cart = loadCart();
+  const id = `${selectedProduct.id}-${selectedColor}-${selectedSize}`;
+  const existing = cart.find(p => p.id === id);
   if (existing) {
     existing.qty += 1;
   } else {
-    cart.push({ ...product, qty: 1 });
+    cart.push({
+      id,
+      name: selectedProduct.nome,
+      price: selectedProduct.preco,
+      qty: 1,
+      thumb: selectedProduct.imagens?.[0] || "",
+      cor: selectedColor,
+      tamanho: selectedSize
+    });
   }
   saveCart(cart);
-  updateFloatingCart(); // Atualiza o carrinho flutuante
-  alert(`${product.name} adicionado ao carrinho.`);
-}
-
-// Remover item do carrinho (remove sem confirmação)
-function removeFromCart(id) {
-  let cart = loadCart().filter(p => p.id !== id);
-  saveCart(cart);
-  // Atualiza todas as views após remoção
   updateFloatingCart();
-  renderCart();        // atualiza página do carrinho se presente
-  renderCartModal();   // atualiza modal do carrinho se aberto
-}
+  renderCart();
+  renderCartModal();
+  closeProductModal();
+  alert("Produto adicionado ao carrinho!");
+});
 
-// Novo: controle de confirmação antes de remover
+// ==========================
+// MODAL DO CARRINHO
+// ==========================
+document.getElementById('cart-button')?.addEventListener('click', () => {
+  renderCartModal();
+  document.getElementById('cart-modal')?.classList.remove('hidden');
+});
+
+document.getElementById('close-cart-modal')?.addEventListener('click', () => {
+  document.getElementById('cart-modal')?.classList.add('hidden');
+});
+
+document.getElementById('cart-modal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'cart-modal') document.getElementById('cart-modal')?.classList.add('hidden');
+});
+
+// ==========================
+// REMOÇÃO COM CONFIRMAÇÃO
+// ==========================
 let pendingRemoveId = null;
 
 function requestRemove(id) {
@@ -89,9 +279,13 @@ function requestRemove(id) {
 
 function confirmRemove() {
   if (!pendingRemoveId) return;
-  removeFromCart(pendingRemoveId);
+  let cart = loadCart().filter(p => p.id !== pendingRemoveId);
+  saveCart(cart);
   pendingRemoveId = null;
   document.getElementById('remove-confirm-modal')?.classList.add('hidden');
+  renderCart();
+  renderCartModal();
+  updateFloatingCart();
 }
 
 function cancelRemove() {
@@ -99,194 +293,38 @@ function cancelRemove() {
   document.getElementById('remove-confirm-modal')?.classList.add('hidden');
 }
 
-// Exibir carrinho em qualquer página que tenha container
-function renderCart(containerId = "cart-items", subtotalId = "subtotal") {
-  const cart = loadCart();
-  const container = document.getElementById(containerId);
-  const subtotalEl = document.getElementById(subtotalId);
-  if (!container || !subtotalEl) return;
-
-  let subtotal = 0;
-  container.innerHTML = "";
-
-  if (cart.length === 0) {
-    container.innerHTML = "<p>Seu carrinho está vazio.</p>";
-  } else {
-    cart.forEach(item => {
-      subtotal += item.price * item.qty;
-      container.innerHTML += `
-        <div class="cart-item">
-          <img src="${item.thumb || 'https://via.placeholder.com/120'}" alt="${item.name}">
-          <div class="cart-item-info">
-            <strong>${item.name}</strong>
-            <span>R$ ${item.price.toFixed(2)}</span>
-          </div>
-          <div>
-          <div class="cart-item-actions">
-            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
-            <span>${item.qty}</span>
-            <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
-          </div>
-          <a href="#" onclick="event.preventDefault(); requestRemove('${item.id}')">Remover</a>
-          </div>
-          <div class="item-total"><strong>R$ ${(item.price * item.qty).toFixed(2)}</strong></div>
-        </div>
-      `;
-    });
-  }
-
-  subtotalEl.textContent = subtotal.toFixed(2);
-}
-
-// ==========================
-// Checkout via WhatsApp
-// ==========================
-function sendWhatsAppOrder(numero = "5588999999999") {
-  const cart = loadCart();
-  if (cart.length === 0) {
-    alert("Carrinho vazio!");
-    return;
-  }
-
-  let message = "🛍️ Pedido:\n\n";
-  let total = 0;
-  cart.forEach(item => {
-    message += `• ${item.name} (${item.qty}x) - R$ ${(item.price * item.qty).toFixed(2)}\n`;
-    total += item.price * item.qty;
-  });
-  message += `\n💰 Total: R$ ${total.toFixed(2)}`;
-
-  const url = `https://wa.me/${numero}?text=${encodeURIComponent(message)}`;
-  window.open(url, "_blank");
-}
-
-// ==========================
-// Bind botões "Compre Agora"
-// ==========================
-
-document.querySelectorAll('.btn-add-cart').forEach(btn => {
-  btn.addEventListener('click', () => {
-    try {
-      const data = JSON.parse(btn.dataset.product);
-      addToCart(data);
-    } catch (err) {
-      console.error('Produto inválido no data-product', err);
-    }
-  });
+document.getElementById('remove-confirm-btn')?.addEventListener('click', confirmRemove);
+document.getElementById('cancel-remove-btn')?.addEventListener('click', cancelRemove);
+document.getElementById('remove-confirm-modal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'remove-confirm-modal') cancelRemove();
 });
 
 // ==========================
-// Carrinho Flutuante
+// ALTERAÇÃO DE QUANTIDADE
 // ==========================
-function updateFloatingCart() {
-  const cart = loadCart();
-  const countEl = document.getElementById('cart-count');
-  const dropdown = document.getElementById('cart-dropdown-items');
-  if (!countEl || !dropdown) return;
-
-  // Atualiza contagem
-  let totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-  countEl.textContent = totalQty;
-
-  // Renderiza lista dropdown
-  dropdown.innerHTML = "";
-  if (cart.length === 0) {
-    dropdown.innerHTML = "<p>Seu carrinho está vazio.</p>";
-    return;
-  }
-  cart.forEach(item => {
-    dropdown.innerHTML += `
-      <div class="cart-dropdown-item">
-        <img src="${item.thumb || 'https://via.placeholder.com/50'}" alt="${item.name}">
-        <div>
-          <strong>${item.name}</strong><br>
-          ${item.qty}x R$ ${item.price.toFixed(2)}
-        </div>
-      </div>
-    `;
-  });
-}
-
-// Atualiza carrinho flutuante ao carregar
-document.addEventListener("DOMContentLoaded", () => {
-  updateFloatingCart();
-
-  // Registra listeners do modal de confirmação, se os elementos existirem
-  document.getElementById('remove-confirm-btn')?.addEventListener('click', confirmRemove);
-  document.getElementById('cancel-remove-btn')?.addEventListener('click', cancelRemove);
-
-  // Fechar modal clicando fora (opcional)
-  document.getElementById('remove-confirm-modal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'remove-confirm-modal') {
-      cancelRemove();
-    }
-  });
-});
-
-// ==========================
-// Modal do Carrinho
-// ==========================
-function renderCartModal() {
-  const cart = loadCart();
-  const container = document.getElementById('cart-modal-items');
-  const totalEl = document.getElementById('cart-modal-total');
-  if (!container || !totalEl) return;
-
-  let total = 0;
-  container.innerHTML = "";
-  if (cart.length === 0) {
-    container.innerHTML = "<p>Seu carrinho está vazio.</p>";
-  } else {
-    cart.forEach(item => {
-      total += item.price * item.qty;
-      container.innerHTML += `
-        <div class="cart-item-preview">
-          <img src="${item.thumb || 'https://via.placeholder.com/50'}" alt="${item.name}">
-          <div>
-            <strong>${item.name}</strong><br>
-            ${item.qty}x R$ ${item.price.toFixed(2)}
-          </div>
-        </div>
-      `;
-    });
-  }
-  totalEl.textContent = total.toFixed(2);
-}
-
-// Abrir modal ao clicar no carrinho
-document.getElementById('cart-button')?.addEventListener('click', () => {
-  renderCartModal();
-  document.getElementById('cart-modal')?.classList.remove('hidden');
-});
-
-// Fechar modal
-document.getElementById('close-cart-modal')?.addEventListener('click', () => {
-  document.getElementById('cart-modal')?.classList.add('hidden');
-});
-
-// Fechar modal clicando fora
-document.getElementById('cart-modal')?.addEventListener('click', (e) => {
-  if (e.target.id === 'cart-modal') {
-    document.getElementById('cart-modal')?.classList.add('hidden');
-  }
-});
 function changeQty(id, delta) {
   let cart = loadCart();
   let item = cart.find(p => p.id === id);
   if (!item) return;
 
-  // Se for diminuir e qty === 1, pedir confirmação antes de remover
   if (delta === -1 && item.qty === 1) {
     requestRemove(id);
     return;
   }
 
   item.qty += delta;
-  if (item.qty <= 0) {
-    cart = cart.filter(p => p.id !== id);
-  }
+  if (item.qty <= 0) cart = cart.filter(p => p.id !== id);
+
   saveCart(cart);
+  updateFloatingCart();
   renderCart();
   renderCartModal();
-  updateFloatingCart();
 }
+
+// ==========================
+// INICIALIZAÇÃO
+// ==========================
+document.addEventListener("DOMContentLoaded", () => {
+  updateFloatingCart();
+  renderCart(); // para carrinho.html
+});

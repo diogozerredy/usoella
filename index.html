@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/filter.css" />
-    
   </head>
   <body style="background-color: rgba(191, 108, 151,0.8); display: flex; justify-content: center;">
     <div class="overlay">
@@ -42,7 +41,6 @@
             <a href="#novidades" class="btn btn-primary" id="cta-comprar">Ver novidades</a>
           </div>
           <div class="hero-media">
-            <!-- Placeholder livre para trocar depois -->
             <img src="https://picsum.photos/id/1011/800/1000" alt="Modelo vestindo vestido rosa" />
           </div>
         </div>
@@ -52,15 +50,11 @@
 <section id="novidades" class="novidades">
   <div class="container novidades-grid">
     <h2>NOVIDADES</h2>
-<div id="product-filters" class="filters"></div>
-<div class="cards-grid" id="product-list"></div>
-<div id="novidades-empty" style="display:none; padding:2rem 0;">
-  <p><em>Novidades em breve ✨</em></p>
-</div>
-
-   
-
-    <!-- link direto pro carrinho -->
+    <div id="product-filters" class="filters"></div>
+    <div class="cards-grid" id="product-list"></div>
+    <div id="novidades-empty" style="display:none; padding:2rem 0;">
+      <p><em>Novidades em breve ✨</em></p>
+    </div>
     <div style="margin-top:2rem;">
       <a href="carrinho.html" class="btn btn-primary">Conheça a Coleção</a>
     </div>
@@ -82,22 +76,22 @@
           </div>
         </div>
       </section>
-      <!-- CONTATO -->
-    <section id="contact" class="contato">
-  <div class="contato-grid">
-    <h2>Entre em Contato</h2>
-    <p>Fale com a gente pelas redes sociais:</p>
-    <div class="contato-links">
-      <a href="https://wa.me/5599999999999" target="_blank" class="btn social-link">
-        <i class="fab fa-whatsapp"></i> WhatsApp
-      </a>
-      <a href="https://instagram.com/seuinstagram" target="_blank" class="btn  social-link">
-        <i class="fab fa-instagram"></i> Instagram
-      </a>
-    </div>
-  </div>
-</section>
 
+      <!-- CONTATO -->
+      <section id="contact" class="contato">
+        <div class="contato-grid">
+          <h2>Entre em Contato</h2>
+          <p>Fale com a gente pelas redes sociais:</p>
+          <div class="contato-links">
+            <a href="https://wa.me/5599999999999" target="_blank" class="btn social-link">
+              <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+            <a href="https://instagram.com/seuinstagram" target="_blank" class="btn social-link">
+              <i class="fab fa-instagram"></i> Instagram
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">
@@ -105,50 +99,76 @@
         <p>© 2025 USOELLA. Todos os direitos reservados.</p>
       </div>
     </footer>
-
     </div>
+
     <!-- Carrinho Flutuante -->
-<div id="floating-cart">
-  <button id="cart-button">
-    🛒 <span id="cart-count">0</span>
-  </button>
-  <div id="cart-dropdown" class="hidden">
-    <h4>Meu Carrinho</h4>
-    <div id="cart-dropdown-items"></div>
-    <a href="carrinho.html" class="btn btn-primary" style="margin-top:1rem; display:block;">Ver Carrinho</a>
-  </div>
-</div>
-<!-- Modal do Carrinho -->
-<div id="cart-modal" class="cart-modal hidden">
-  <div class="cart-modal-content">
-    <span id="close-cart-modal" class="close-btn">&times;</span>
-    <h3>Meu Carrinho</h3>
-    <div id="cart-modal-items"></div>
-    <p><strong>Total:</strong> R$ <span id="cart-modal-total">0,00</span></p>
-    <a href="carrinho.html" class="btn btn-primary" style="margin-top:1rem;">Ver Carrinho Completo</a>
-  </div>
-</div>
-
-<!-- Modal de confirmação de remoção -->
-<div id="remove-confirm-modal" class="cart-modal hidden">
-  <div class="cart-modal-content">
-    <h3>Remover item</h3>
-    <p id="remove-confirm-message">Deseja remover este item do carrinho?</p>
-    <div style="display:flex; gap:0.5rem; margin-top:1rem;">
-      <button id="remove-confirm-btn" class="btn btn-primary">Remover</button>
-      <button id="cancel-remove-btn" class="btn btn-outline">Cancelar</button>
+    <div id="floating-cart">
+      <button id="cart-button">
+        🛒 <span id="cart-count">0</span>
+      </button>
+      <div id="cart-dropdown" class="hidden">
+        <h4>Meu Carrinho</h4>
+        <div id="cart-dropdown-items"></div>
+        <a href="carrinho.html" class="btn btn-primary" style="margin-top:1rem; display:block;">Ver Carrinho</a>
+      </div>
     </div>
-  </div>
-</div>
+
+    <!-- Modal do Produto (estilo Shein) -->
+    <div id="produto-modal" class="cart-modal hidden">
+      <div class="cart-modal-content">
+        <span id="close-produto-modal" class="close-btn">&times;</span>
+        <div class="modal-produto-info">
+          <div class="modal-produto-carousel">
+            <button class="carousel-prev">&#10094;</button>
+            <img id="modal-produto-img" src="" alt="Produto" class="modal-produto-img">
+            <button class="carousel-next">&#10095;</button>
+          </div>
+          <div class="modal-produto-detalhes">
+            <h3 id="modal-produto-nome"></h3>
+            <p id="modal-produto-preco"></p>
+          </div>
+        </div>
+
+        <div class="modal-opcoes">
+          <div id="modal-cores-container">
+            <h4>Cor</h4>
+            <div id="modal-cores" class="opcoes-grid"></div>
+          </div>
+          <div id="modal-tamanhos-container">
+            <h4>Tamanho</h4>
+            <div id="modal-tamanhos" class="opcoes-grid"></div>
+            <p id="modal-tamanho-unico" style="display:none;"><em>Tamanho Único (M)</em></p>
+          </div>
+        </div>
+
+        <button id="confirmar-compra" disabled class="btn btn-primary">Confirmar Compra</button>
+      </div>
+    </div>
+
+    <!-- Modal do Carrinho -->
+    <div id="cart-modal" class="cart-modal hidden">
+      <div class="cart-modal-content">
+        <span id="close-cart-modal" class="close-btn">&times;</span>
+        <h3>Meu Carrinho</h3>
+        <div id="cart-modal-items"></div>
+        <p><strong>Total:</strong> R$ <span id="cart-modal-total">0,00</span></p>
+        <a href="carrinho.html" class="btn btn-primary" style="margin-top:1rem;">Ver Carrinho Completo</a>
+      </div>
+    </div>
+
+    <!-- Modal de confirmação de remoção -->
+    <div id="remove-confirm-modal" class="cart-modal hidden">
+      <div class="cart-modal-content">
+        <h3>Remover item</h3>
+        <p id="remove-confirm-message">Deseja remover este item do carrinho?</p>
+        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+          <button id="remove-confirm-btn" class="btn btn-primary">Remover</button>
+          <button id="cancel-remove-btn" class="btn btn-outline">Cancelar</button>
+        </div>
+      </div>
+    </div>
 
     <script src="/js/script.js"></script>
     <script src="/js/cms.js"></script>
-    <!-- Adicionar script de debug temporário -->
-    <script>
-      console.log('Página carregada');
-      document.querySelectorAll('.btn-add-cart').forEach(btn => {
-        console.log('Botão encontrado:', btn);
-      });
-    </script>
   </body>
 </html>
