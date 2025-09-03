@@ -7,16 +7,37 @@
       "ativo": true,
       "imagem": "/images/uploads/whatsapp-image-2025-08-27-at-6.12.05-pm.jpeg",
       "categoria": "Sapatos",
-      "cores": [
-        "verde"
-      ],
+      "cores": ["verde"],
       "nome": "teste",
       "id": "1452",
       "createdAt": "2025-08-31T04:26:13.896Z",
-      "tamanhos": [
-        "p",
-        "m"
-      ]
+      "tamanhos": ["p", "m"]
+    },
+    {
+      "destaque": true,
+      "descricao": "Vestido rosê delicado, ótima para eventos.",
+      "preco": 129.9,
+      "ativo": true,
+      "imagem": "/images/uploads/img1.jpg",
+      "categoria": "Camisetas",
+      "cores": ["rosa", "bege", "branco"],
+      "nome": "Vestido Rosê Delicado",
+      "id": "vestido-rose",
+      "createdAt": "2025-08-30T10:00:00.000Z",
+      "tamanhos": ["p", "m", "g"]
+    },
+    {
+      "destaque": false,
+      "descricao": "Bolsa pequena charmosa para o dia a dia.",
+      "preco": 79.5,
+      "ativo": true,
+      "imagem": "/images/uploads/img2.jpg",
+      "categoria": "Bolsas",
+      "cores": ["marrom", "preto"],
+      "nome": "Bolsa Pequena Charmosa",
+      "id": "bolsa-charmosa",
+      "createdAt": "2025-08-29T15:30:00.000Z",
+      "tamanhos": []
     }
   ]
 }

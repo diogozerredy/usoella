@@ -1,35 +1,37 @@
 // ==========================
 // MENU MOBILE
 // ==========================
-const toggle = document.querySelector('.menu-toggle');
-const header = document.querySelector('.site-header');
-const menu = document.querySelector('#primary-nav');
+const toggle = document.querySelector(".menu-toggle");
+const header = document.querySelector(".site-header");
+const menu = document.querySelector("#primary-nav");
 
-toggle?.addEventListener('click', (e) => {
+toggle?.addEventListener("click", (e) => {
   e.stopPropagation();
-  const isOpen = header.classList.toggle('menu-open');
-  toggle.setAttribute('aria-expanded', String(isOpen));
+  const isOpen = header.classList.toggle("menu-open");
+  toggle.setAttribute("aria-expanded", String(isOpen));
 });
 
-menu?.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', () => {
-    header.classList.remove('menu-open');
-    toggle?.setAttribute('aria-expanded', 'false');
+menu?.querySelectorAll("a").forEach((a) => {
+  a.addEventListener("click", () => {
+    header.classList.remove("menu-open");
+    toggle?.setAttribute("aria-expanded", "false");
   });
 });
 
-document.addEventListener('click', (e) => {
-  if (header.classList.contains('menu-open') && !header.contains(e.target)) {
-    header.classList.remove('menu-open');
-    toggle?.setAttribute('aria-expanded', 'false');
+document.addEventListener("click", (e) => {
+  if (header.classList.contains("menu-open") && !header.contains(e.target)) {
+    header.classList.remove("menu-open");
+    toggle?.setAttribute("aria-expanded", "false");
   }
 });
 
-menu?.addEventListener('click', (e) => e.stopPropagation());
+menu?.addEventListener("click", (e) => e.stopPropagation());
 
-document.getElementById('cta-comprar')?.addEventListener('click', (e) => {
+document.getElementById("cta-comprar")?.addEventListener("click", (e) => {
   e.preventDefault();
-  document.getElementById('novidades')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document
+    .getElementById("novidades")
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
 // ==========================
@@ -58,12 +60,14 @@ function renderCartGeneric({ containerId, totalId, isModal = false }) {
   if (cart.length === 0) {
     container.innerHTML = "<p>Seu carrinho está vazio.</p>";
   } else {
-    cart.forEach(item => {
+    cart.forEach((item) => {
       total += item.price * item.qty;
       if (isModal) {
         container.innerHTML += `
           <div class="cart-item-preview">
-            <img src="${item.thumb || 'https://via.placeholder.com/50'}" alt="${item.name}">
+            <img src="${item.thumb || "https://via.placeholder.com/50"}" alt="${
+          item.name
+        }">
             <div>
               <strong>${item.name}</strong><br>
               ${item.qty}x R$ ${item.price.toFixed(2)}
@@ -73,21 +77,31 @@ function renderCartGeneric({ containerId, totalId, isModal = false }) {
       } else {
         container.innerHTML += `
           <div class="cart-item">
-            <img src="${item.thumb || 'https://via.placeholder.com/120'}" alt="${item.name}">
+            <img src="${
+              item.thumb || "https://via.placeholder.com/120"
+            }" alt="${item.name}">
             <div class="cart-item-info">
               <strong>${item.name}</strong>
               <span>R$ ${item.price.toFixed(2)}</span>
             </div>
             <div>
             <div class="cart-item-actions">
-              <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
+              <button class="qty-btn" onclick="changeQty('${
+                item.id
+              }', -1)">-</button>
               <span>${item.qty}</span>
-              <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+              <button class="qty-btn" onclick="changeQty('${
+                item.id
+              }', 1)">+</button>
               </div>
-              <a class="remover" href="#" onclick="event.preventDefault(); requestRemove('${item.id}')">Remover</a>
+              <a class="remover" href="#" onclick="event.preventDefault(); requestRemove('${
+                item.id
+              }')">Remover</a>
               
             </div>
-            <div class="item-total"><strong>R$ ${(item.price * item.qty).toFixed(2)}</strong></div>
+            <div class="item-total"><strong>R$ ${(
+              item.price * item.qty
+            ).toFixed(2)}</strong></div>
           </div>
         `;
       }
@@ -103,7 +117,11 @@ function renderCart(containerId = "cart-items", totalId = "subtotal") {
 }
 
 function renderCartModal() {
-  renderCartGeneric({ containerId: "cart-modal-items", totalId: "cart-modal-total", isModal: true });
+  renderCartGeneric({
+    containerId: "cart-modal-items",
+    totalId: "cart-modal-total",
+    isModal: true,
+  });
 }
 
 // ==========================
@@ -125,11 +143,13 @@ function updateFloatingCart() {
   if (cart.length === 0) {
     dropdown.innerHTML = "<p>Seu carrinho está vazio.</p>";
   } else {
-    cart.forEach(item => {
+    cart.forEach((item) => {
       const div = document.createElement("div");
       div.className = "cart-dropdown-item";
       div.innerHTML = `
-        <img src="${item.thumb || 'https://via.placeholder.com/50'}" alt="${item.name}">
+        <img src="${item.thumb || "https://via.placeholder.com/50"}" alt="${
+        item.name
+      }">
         <div>
           <strong>${item.name}</strong><br>
           ${item.qty}x R$ ${item.price.toFixed(2)}
@@ -164,17 +184,31 @@ function openProductModal(product) {
   preco.textContent = `R$ ${product.preco.toFixed(2)}`;
   img.src = product.imagens?.[0] || "https://via.placeholder.com/200";
 
-  // Render cores
+  // Render cores (agora adiciona data-color e aplica color inline para o swatch)
   coresContainer.innerHTML = "";
   if (product.cores?.length > 0) {
-    product.cores.forEach(cor => {
+    product.cores.forEach((cor) => {
       const btn = document.createElement("button");
       btn.textContent = cor;
       btn.classList.add("opcao-btn");
+      // adiciona atributo para o CSS usar ::before e aplica a cor se for válida
+      btn.setAttribute("data-color", cor);
+      // tenta aplicar como color (se inválido, browser ignora)
+      try {
+        btn.style.color = cor;
+      } catch (e) {
+        /* ignore */
+      }
+
+      btn.setAttribute("aria-pressed", "false");
       btn.onclick = () => {
         selectedColor = cor;
-        document.querySelectorAll("#modal-cores .opcao-btn").forEach(b => b.classList.remove("ativo"));
+        document.querySelectorAll("#modal-cores .opcao-btn").forEach((b) => {
+          b.classList.remove("ativo");
+          b.setAttribute("aria-pressed", "false");
+        });
         btn.classList.add("ativo");
+        btn.setAttribute("aria-pressed", "true");
         checkConfirm();
       };
       coresContainer.appendChild(btn);
@@ -184,17 +218,22 @@ function openProductModal(product) {
     selectedColor = "Única";
   }
 
-  // Render tamanhos
+  // Render tamanhos (marca aria-pressed)
   tamanhosContainer.innerHTML = "";
   if (product.tamanhos?.length > 0) {
-    product.tamanhos.forEach(tamanho => {
+    product.tamanhos.forEach((tamanho) => {
       const btn = document.createElement("button");
       btn.textContent = tamanho;
       btn.classList.add("opcao-btn");
+      btn.setAttribute("aria-pressed", "false");
       btn.onclick = () => {
         selectedSize = tamanho;
-        document.querySelectorAll("#modal-tamanhos .opcao-btn").forEach(b => b.classList.remove("ativo"));
+        document.querySelectorAll("#modal-tamanhos .opcao-btn").forEach((b) => {
+          b.classList.remove("ativo");
+          b.setAttribute("aria-pressed", "false");
+        });
         btn.classList.add("ativo");
+        btn.setAttribute("aria-pressed", "true");
         checkConfirm();
       };
       tamanhosContainer.appendChild(btn);
@@ -217,13 +256,16 @@ function checkConfirm() {
   btn.disabled = !(selectedColor && selectedSize);
 }
 
-document.querySelector(".modal-close")?.addEventListener("click", closeProductModal);
+// Ajuste: botão de fechar do modal de produto tem id="close-produto-modal"
+document
+  .getElementById("close-produto-modal")
+  ?.addEventListener("click", closeProductModal);
 document.getElementById("confirmar-compra")?.addEventListener("click", () => {
   if (!selectedProduct) return;
 
   const cart = loadCart();
   const id = `${selectedProduct.id}-${selectedColor}-${selectedSize}`;
-  const existing = cart.find(p => p.id === id);
+  const existing = cart.find((p) => p.id === id);
   if (existing) {
     existing.qty += 1;
   } else {
@@ -234,7 +276,7 @@ document.getElementById("confirmar-compra")?.addEventListener("click", () => {
       qty: 1,
       thumb: selectedProduct.imagens?.[0] || "",
       cor: selectedColor,
-      tamanho: selectedSize
+      tamanho: selectedSize,
     });
   }
   saveCart(cart);
@@ -248,17 +290,18 @@ document.getElementById("confirmar-compra")?.addEventListener("click", () => {
 // ==========================
 // MODAL DO CARRINHO
 // ==========================
-document.getElementById('cart-button')?.addEventListener('click', () => {
+document.getElementById("cart-button")?.addEventListener("click", () => {
   renderCartModal();
-  document.getElementById('cart-modal')?.classList.remove('hidden');
+  document.getElementById("cart-modal")?.classList.remove("hidden");
 });
 
-document.getElementById('close-cart-modal')?.addEventListener('click', () => {
-  document.getElementById('cart-modal')?.classList.add('hidden');
+document.getElementById("close-cart-modal")?.addEventListener("click", () => {
+  document.getElementById("cart-modal")?.classList.add("hidden");
 });
 
-document.getElementById('cart-modal')?.addEventListener('click', (e) => {
-  if (e.target.id === 'cart-modal') document.getElementById('cart-modal')?.classList.add('hidden');
+document.getElementById("cart-modal")?.addEventListener("click", (e) => {
+  if (e.target.id === "cart-modal")
+    document.getElementById("cart-modal")?.classList.add("hidden");
 });
 
 // ==========================
@@ -269,20 +312,22 @@ let pendingRemoveId = null;
 function requestRemove(id) {
   pendingRemoveId = id;
   const cart = loadCart();
-  const item = cart.find(p => p.id === id);
-  const msgEl = document.getElementById('remove-confirm-message');
+  const item = cart.find((p) => p.id === id);
+  const msgEl = document.getElementById("remove-confirm-message");
   if (msgEl) {
-    msgEl.textContent = item ? `Deseja remover "${item.name}" do carrinho?` : 'Deseja remover este item do carrinho?';
+    msgEl.textContent = item
+      ? `Deseja remover "${item.name}" do carrinho?`
+      : "Deseja remover este item do carrinho?";
   }
-  document.getElementById('remove-confirm-modal')?.classList.remove('hidden');
+  document.getElementById("remove-confirm-modal")?.classList.remove("hidden");
 }
 
 function confirmRemove() {
   if (!pendingRemoveId) return;
-  let cart = loadCart().filter(p => p.id !== pendingRemoveId);
+  let cart = loadCart().filter((p) => p.id !== pendingRemoveId);
   saveCart(cart);
   pendingRemoveId = null;
-  document.getElementById('remove-confirm-modal')?.classList.add('hidden');
+  document.getElementById("remove-confirm-modal")?.classList.add("hidden");
   renderCart();
   renderCartModal();
   updateFloatingCart();
@@ -290,21 +335,27 @@ function confirmRemove() {
 
 function cancelRemove() {
   pendingRemoveId = null;
-  document.getElementById('remove-confirm-modal')?.classList.add('hidden');
+  document.getElementById("remove-confirm-modal")?.classList.add("hidden");
 }
 
-document.getElementById('remove-confirm-btn')?.addEventListener('click', confirmRemove);
-document.getElementById('cancel-remove-btn')?.addEventListener('click', cancelRemove);
-document.getElementById('remove-confirm-modal')?.addEventListener('click', (e) => {
-  if (e.target.id === 'remove-confirm-modal') cancelRemove();
-});
+document
+  .getElementById("remove-confirm-btn")
+  ?.addEventListener("click", confirmRemove);
+document
+  .getElementById("cancel-remove-btn")
+  ?.addEventListener("click", cancelRemove);
+document
+  .getElementById("remove-confirm-modal")
+  ?.addEventListener("click", (e) => {
+    if (e.target.id === "remove-confirm-modal") cancelRemove();
+  });
 
 // ==========================
 // ALTERAÇÃO DE QUANTIDADE
 // ==========================
 function changeQty(id, delta) {
   let cart = loadCart();
-  let item = cart.find(p => p.id === id);
+  let item = cart.find((p) => p.id === id);
   if (!item) return;
 
   if (delta === -1 && item.qty === 1) {
@@ -313,7 +364,7 @@ function changeQty(id, delta) {
   }
 
   item.qty += delta;
-  if (item.qty <= 0) cart = cart.filter(p => p.id !== id);
+  if (item.qty <= 0) cart = cart.filter((p) => p.id !== id);
 
   saveCart(cart);
   updateFloatingCart();
