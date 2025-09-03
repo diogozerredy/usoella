@@ -47,15 +47,24 @@ function buildFilters(categories) {
 
 function productCardHTML(p) {
   const price = Number(p.preco || 0);
-  // usa p.imagem ou p.imagens[0] quando disponível
+  // usa p.imagem ou p.imagens[0] (suporta objeto ou string)
   const thumb =
     p.imagem ||
-    (Array.isArray(p.imagens) && p.imagens[0]) ||
+    (Array.isArray(p.imagens) &&
+      (typeof p.imagens[0] === "string"
+        ? p.imagens[0]
+        : p.imagens[0].src || "")) ||
     "https://via.placeholder.com/600x600?text=Produto";
   return `
-    <article class="card">
+    <article class="card" data-prod-id="${p.id}">
       <div class="thumb">
-        <img src="${thumb}" alt="${p.nome || ""}">
+        <button class="card-prev" aria-label="Imagem anterior" data-prod-id="${
+          p.id
+        }">&#10094;</button>
+        <img class="card-thumb-img" src="${thumb}" alt="${p.nome || ""}">
+        <button class="card-next" aria-label="Próxima imagem" data-prod-id="${
+          p.id
+        }">&#10095;</button>
       </div>
       <div class="card-body">
         <h3>${p.nome || ""}</h3>
@@ -149,7 +158,7 @@ async function renderProdutos(selectedCat = "__ALL__") {
         console.warn("Produto não encontrado para id", id);
         return;
       }
-      // Normaliza o objeto para o formato que openProductModal espera
+      // Normaliza imagens: passa array como está (strings ou objetos {src,color})
       const productForModal = {
         id: prod.id,
         nome: prod.nome,
@@ -168,6 +177,57 @@ async function renderProdutos(selectedCat = "__ALL__") {
         console.warn("openProductModal não disponível.");
       }
     });
+  });
+
+  // bind card thumbnail carousel controls (prev/next) por card
+  listEl.querySelectorAll(".card").forEach((cardEl) => {
+    const prodId = cardEl.dataset.prodId;
+    const prod = (window.__produtos || []).find(
+      (p) => String(p.id) === String(prodId)
+    );
+    if (!prod) return;
+
+    // normaliza imagens para este produto em formato { src, color? }
+    const imgsMeta = Array.isArray(prod.imagens)
+      ? prod.imagens.map((it) =>
+          typeof it === "string"
+            ? { src: it }
+            : { src: it.src || it.url || "", color: it.color || it.colorName }
+        )
+      : prod.imagem
+      ? [{ src: prod.imagem }]
+      : [];
+    const imgs = imgsMeta.map((m) => m.src).filter(Boolean);
+    if (imgs.length <= 1) {
+      // esconde botões se não há múltiplas imagens
+      cardEl.querySelector(".card-prev")?.classList.add("hidden");
+      cardEl.querySelector(".card-next")?.classList.add("hidden");
+      return;
+    }
+
+    const imgEl = cardEl.querySelector(".card-thumb-img");
+    const prev = cardEl.querySelector(".card-prev");
+    const next = cardEl.querySelector(".card-next");
+    cardEl.dataset.imgIndex = "0";
+
+    prev?.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      let idx = parseInt(cardEl.dataset.imgIndex || "0", 10) - 1;
+      if (idx < 0) idx = imgs.length - 1;
+      cardEl.dataset.imgIndex = String(idx);
+      imgEl.src = imgs[idx];
+    });
+
+    next?.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      let idx = parseInt(cardEl.dataset.imgIndex || "0", 10) + 1;
+      if (idx >= imgs.length) idx = 0;
+      cardEl.dataset.imgIndex = String(idx);
+      imgEl.src = imgs[idx];
+    });
+
+    // opcional: ao abrir modal e selecionar cor, o modal já altera sua imagem;
+    // se quiser sincronizar card + modal automaticamente ao confirmar, é possível adicionar um evento custom.
   });
 }
 

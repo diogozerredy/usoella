@@ -26,7 +26,14 @@ collections:
               - { label: "Descrição", name: "descricao", widget: "text" }
               - { label: "Preço (R$)", name: "preco", widget: "number", value_type: "float", min: 0 }
               - { label: "Categoria", name: "categoria", widget: "select", options: ["Camisetas","Sapatos","Bolsas","Acessórios","Outros"] }
-              - { label: "Imagem", name: "imagem", widget: "image" }
+              - { label: "Imagem (legacy)", name: "imagem", widget: "image", required: false }
+              - label: "Imagens (opcional, use para cores)"
+                name: "imagens"
+                widget: "list"
+                required: false
+                field:
+                  - { label: "Imagem", name: "src", widget: "image" }
+                  - { label: "Cor (opcional)", name: "color", widget: "string", required: false, hint: "Nome da cor que será associada a esta imagem (ex: rosa, branco)" }
               - label: "Cores"
                 name: "cores"
                 widget: "list"

@@ -160,8 +160,8 @@ img{ max-width: 100%; display:block; }
 }
 
 /* =====================
-   Novidades (Grid)
-===================== */
+   Novidades (Grid) - bloco unificado para evitar duplicações
+ ====================== */
 .novidades{
   background: #fff;
   padding: 3rem 0;
@@ -171,12 +171,15 @@ img{ max-width: 100%; display:block; }
   font-size: 1.8rem;
   margin: 0 0 1.5rem;
 }
+
 .cards-grid{
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   padding: 2rem;
   gap: 2rem;
 }
+
+/* card base */
 .card{
   background: #fff;
   border-radius: var(--radius-xl);
@@ -184,32 +187,65 @@ img{ max-width: 100%; display:block; }
   overflow: hidden;
   display: grid;
   grid-template-rows: auto 1fr;
-  /* reduzir altura visual do card */
   min-height: 0;
   align-items: start;
 }
-/* thumb: usar aspect-ratio para padrão e limitar max-height para evitar cortes excessivos */
+
+/* thumb unificada: posicionamento para setas + aspecto e limites */
 .card .thumb{
-  aspect-ratio: 4 / 5; /* mantém proporção mais natural */
-  height: auto;
-  max-height: 320px;
+  position: relative;            /* para posicionar setas sobre a imagem */
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  max-height: 480px;
   overflow: hidden;
   background: #faf6f6;
   display: block;
+  border-radius: 12px 12px 0 0;
 }
+
+/* imagem do thumb: preenche o container com cover (visual consistente) */
 .card .thumb img{
   width: 100%;
   height: 100%;
-  object-fit: cover; /* mantém crop uniforme */
-  object-position: center; /* centraliza o crop */
+  object-fit: cover;
+  object-position: center;
   display: block;
 }
+
+/* setas do card (pequenas, translúcidas) - sempre uma de cada lado */
+.card .thumb .card-prev,
+.card .thumb .card-next{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(0,0,0,0.18);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: background .12s ease, transform .08s ease, opacity .12s ease;
+  opacity: 0.95;
+}
+.card .thumb .card-prev{ left: 8px; right: auto; }
+.card .thumb .card-next{ right: 8px; left: auto; }
+.card .thumb .card-prev:hover,
+.card .thumb .card-next:hover{
+  background: rgba(0,0,0,0.26);
+  transform: translateY(-50%) scale(1.03);
+}
+
+/* corpo do card (unificado) */
 .card-body{
-  padding: 0.85rem 1.25rem 1.25rem; /* ligeiro ajuste */
+  padding: 0.85rem 1.25rem 1.25rem;
   display: flex;
   flex-direction: column;
   gap: .1rem;
-  align-content: center;
   align-items: start;
 }
 .card-body h3{
@@ -223,7 +259,9 @@ img{ max-width: 100%; display:block; }
   margin: .25rem 0 0.25rem;
 }
 
-/* Responsividade para cards: mais pontos de quebra para tablets e celulares */
+/* =====================
+   Responsividade - unificada
+===================== */
 @media (max-width: 1200px){
   .cards-grid{
     grid-template-columns: repeat(3, 1fr);
@@ -238,20 +276,8 @@ img{ max-width: 100%; display:block; }
     gap: 1rem;
     padding: 1rem;
   }
-  /* thumb: aumentar um pouco para tablets e garantir preenchimento */
   .card .thumb{
-    aspect-ratio: 4 / 5;
-    max-height: 320px; /* aumentado para evitar cortes */
-    overflow: hidden;
-    background: #faf6f6;
-    display: block; /* trocar para block para o img preencher corretamente */
-  }
-  .card .thumb img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* preenche todo o container */
-    object-position: center;
-    display: block;
+    max-height: 420px;
   }
   .card-body{ padding: 0.7rem 1rem 1rem; }
   .card-body h3{ font-size: 0.98rem; }
@@ -265,7 +291,7 @@ img{ max-width: 100%; display:block; }
     padding: 0.75rem;
   }
 
-  /* Forçar card em coluna no mobile e permitir thumbs maiores para imagens inteiras */
+  /* Card vertical no mobile */
   .card{
     display: flex;
     flex-direction: column;
@@ -275,21 +301,13 @@ img{ max-width: 100%; display:block; }
   }
 
   .card .thumb{
-    width: 100%;
     aspect-ratio: 3 / 4;
-    max-height: 420px; /* mantém maior altura para exibir mais da imagem */
-    overflow: hidden;
-    background: #faf6f6;
-    box-sizing: border-box;
-    display: block; /* block para o img preencher */
+    max-height: 560px; /* espaço maior para imagem inteira se necessário */
   }
   .card .thumb img{
     width: 100%;
     height: 100%;
-    object-fit: cover; /* preenche todo o container sem deixar espaço em branco */
-    object-position: center;
-    display: block;
-    background: transparent;
+    object-fit: cover;
   }
 
   .card-body{
@@ -298,25 +316,17 @@ img{ max-width: 100%; display:block; }
     width: 100%;
     box-sizing: border-box;
   }
-  .card-body h3{
-    font-size: 0.98rem;
-    line-height: 1.15;
-    margin-bottom: 0.25rem;
-  }
-  .price{
-    font-size: 0.95rem;
-    margin-bottom: 0.35rem;
-  }
+  .card-body h3{ font-size: 0.98rem; line-height: 1.15; margin-bottom: 0.25rem; }
+  .price{ font-size: 0.95rem; margin-bottom: 0.35rem; }
 
-  /* botão do card (quando existirem) ocupa toda a largura no mobile */
-  .card-body .btn,
-  .card-body .btn-primary {
-    width: 100%;
-    padding: 0.7rem 0.75rem;
-    font-size: 0.98rem;
-    border-radius: 10px;
-    box-sizing: border-box;
+  /* setas móveis: maior área de toque */
+  .card .thumb .card-prev,
+  .card .thumb .card-next{
+    width: 46px;
+    height: 46px;
   }
+  .card .thumb .card-prev { left: 6px; right: auto; }
+  .card .thumb .card-next { right: 6px; left: auto; }
 }
 
 /* =====================
@@ -754,11 +764,63 @@ img{ max-width: 100%; display:block; }
   .card .thumb{
     aspect-ratio: 3 / 4;
   }
-}
-@media (max-width: 600px){
-  .cards-grid{ grid-template-columns: 1fr; }
-  /* diminuir altura das thumbs em telas pequenas */
-  .card .thumb{
-    aspect-ratio: 3 / 4;
+
+  /* Forçar card em coluna no mobile para evitar imagem ocupando só metade */
+  .card{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 12px;
+    overflow: hidden;
   }
+
+  /* thumb: garantir ocupação total da largura e aumentar altura para mostrar a imagem inteira */
+  .card .thumb{
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    display: block;
+  }
+  .card .thumb img{
+    width: 100%;
+    height: auto;        /* importante: height:auto para manter proporção e evitar espaços brancos */
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .card-body{
+    padding: 0.6rem 0.8rem 0.9rem;
+    gap: 0.15rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .card-body h3{
+    font-size: 0.98rem;
+    line-height: 1.15;
+    margin-bottom: 0.25rem;
+  }
+  .price{
+    font-size: 0.95rem;
+    margin-bottom: 0.35rem;
+  }
+
+  /* botão do card (quando existirem) ocupa toda a largura no mobile */
+  .card-body .btn,
+  .card-body .btn-primary {
+    width: 100%;
+    padding: 0.7rem 0.75rem;
+    font-size: 0.98rem;
+    border-radius: 10px;
+    box-sizing: border-box;
+  }
+
+  /* ajuste das setas no mobile: prev à esquerda, next à direita */
+  .card .thumb .card-prev,
+  .card .thumb .card-next{
+    width: 46px;
+    height: 46px;
+  }
+  .card .thumb .card-prev { left: 6px; right: auto; }
+  .card .thumb .card-next { right: 6px; left: auto; }
 }

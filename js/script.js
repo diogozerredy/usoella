@@ -166,11 +166,47 @@ function updateFloatingCart() {
 let selectedProduct = null;
 let selectedColor = null;
 let selectedSize = null;
+let selectedImageIndex = 0;
+let modalImages = []; // array de src strings
+let modalImagesMeta = []; // array de { src, color? }
+
+function updateModalImage(index) {
+  const img = document.getElementById("modal-produto-img");
+  if (!img || !modalImages || modalImages.length === 0) return;
+  if (index < 0) index = modalImages.length - 1;
+  if (index >= modalImages.length) index = 0;
+  selectedImageIndex = index;
+  img.src = modalImages[selectedImageIndex] || "";
+  // atualiza indicadores visuais se houver (opcional)
+}
 
 function openProductModal(product) {
   selectedProduct = product;
   selectedColor = null;
   selectedSize = null;
+  selectedImageIndex = 0;
+  modalImages = [];
+  modalImagesMeta = [];
+
+  // Normaliza imagens: pode ser array de strings ou objetos { src, color }
+  if (Array.isArray(product.imagens)) {
+    product.imagens.forEach((it) => {
+      if (typeof it === "string") {
+        modalImagesMeta.push({ src: it });
+        modalImages.push(it);
+      } else if (it && typeof it === "object") {
+        const src = it.src || it.url || "";
+        const color = it.color || it.colorName || null;
+        if (src) {
+          modalImagesMeta.push({ src, color });
+          modalImages.push(src);
+        }
+      }
+    });
+  } else if (product.imagem) {
+    modalImagesMeta.push({ src: product.imagem });
+    modalImages.push(product.imagem);
+  }
 
   const modal = document.getElementById("produto-modal");
   const nome = document.getElementById("modal-produto-nome");
@@ -179,28 +215,35 @@ function openProductModal(product) {
   const coresContainer = document.getElementById("modal-cores");
   const tamanhosContainer = document.getElementById("modal-tamanhos");
   const btnConfirmar = document.getElementById("confirmar-compra");
+  const prevBtn = modal.querySelector(".carousel-prev");
+  const nextBtn = modal.querySelector(".carousel-next");
 
   nome.textContent = product.nome;
   preco.textContent = `R$ ${product.preco.toFixed(2)}`;
-  img.src = product.imagens?.[0] || "https://via.placeholder.com/200";
+  img.src = modalImages[0] || "https://via.placeholder.com/200";
 
-  // Render cores (agora adiciona data-color e aplica color inline para o swatch)
+  // Render cores e associar diretamente imagem baseada em meta.color quando existir
   coresContainer.innerHTML = "";
   if (product.cores?.length > 0) {
     product.cores.forEach((cor) => {
       const btn = document.createElement("button");
       btn.textContent = cor;
       btn.classList.add("opcao-btn");
-      // adiciona atributo para o CSS usar ::before e aplica a cor se for válida
       btn.setAttribute("data-color", cor);
-      // tenta aplicar como color (se inválido, browser ignora)
       try {
         btn.style.color = cor;
-      } catch (e) {
-        /* ignore */
+      } catch (e) {}
+      btn.setAttribute("aria-pressed", "false");
+
+      // procura meta com color igual (case-insensitive)
+      const corKey = String(cor).toLowerCase();
+      const matched = modalImagesMeta.findIndex(
+        (m) => m.color && String(m.color).toLowerCase() === corKey
+      );
+      if (matched >= 0) {
+        btn.dataset.imgIndex = String(matched);
       }
 
-      btn.setAttribute("aria-pressed", "false");
       btn.onclick = () => {
         selectedColor = cor;
         document.querySelectorAll("#modal-cores .opcao-btn").forEach((b) => {
@@ -209,6 +252,17 @@ function openProductModal(product) {
         });
         btn.classList.add("ativo");
         btn.setAttribute("aria-pressed", "true");
+        // se imagem vinculada, atualiza
+        const idx = parseInt(btn.dataset.imgIndex ?? "-1", 10);
+        if (!isNaN(idx) && idx >= 0 && idx < modalImages.length) {
+          updateModalImage(idx);
+        } else {
+          // fallback: busca substring no src
+          const found = modalImages.findIndex((src) =>
+            String(src).toLowerCase().includes(corKey)
+          );
+          if (found >= 0) updateModalImage(found);
+        }
         checkConfirm();
       };
       coresContainer.appendChild(btn);
@@ -218,7 +272,7 @@ function openProductModal(product) {
     selectedColor = "Única";
   }
 
-  // Render tamanhos (marca aria-pressed)
+  // Render tamanhos
   tamanhosContainer.innerHTML = "";
   if (product.tamanhos?.length > 0) {
     product.tamanhos.forEach((tamanho) => {
@@ -243,6 +297,24 @@ function openProductModal(product) {
     selectedSize = "Único (M)";
   }
 
+  // set handlers prev/next (remove listeners anteriores para evitar duplicação)
+  const clonePrev = prevBtn?.cloneNode(true);
+  const cloneNext = nextBtn?.cloneNode(true);
+  if (prevBtn && clonePrev) prevBtn.parentNode.replaceChild(clonePrev, prevBtn);
+  if (nextBtn && cloneNext) nextBtn.parentNode.replaceChild(cloneNext, nextBtn);
+
+  const newPrev = modal.querySelector(".carousel-prev");
+  const newNext = modal.querySelector(".carousel-next");
+  newPrev?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    updateModalImage(selectedImageIndex - 1);
+  });
+  newNext?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    updateModalImage(selectedImageIndex + 1);
+  });
+
+  // habilita/desabilita confirmar conforme seleção
   btnConfirmar.disabled = true;
   modal.classList.remove("hidden");
 }
