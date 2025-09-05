@@ -31,8 +31,7 @@ body{
   color: var(--ink-900);
   background: var(--bg);
   display: flex;
-  justify-self: center;
-}
+  justify-content: center;}
 
 img{ max-width: 100%; display:block; }
 
