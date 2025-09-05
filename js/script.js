@@ -45,6 +45,71 @@ function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
+// --- Novo helper: resolve thumb do item baseado no produto original e cor ---
+function getThumbForItem(item) {
+  const itemId = String(item.id || "");
+  const produtos = window.__produtos || [];
+  if (!itemId) return item.thumb || "https://via.placeholder.com/120";
+
+  // procura o produto cujo id seja prefixo de itemId (ex: 'vestido-rose' é prefixo de 'vestido-rose-rosa-p')
+  // escolhe o match com maior comprimento de id para evitar colisões
+  let matchedProd = null;
+  produtos.forEach((p) => {
+    const pid = String(p.id || "");
+    if (!pid) return;
+    if (itemId === pid || itemId.startsWith(pid + "-") || itemId.startsWith(pid)) {
+      if (!matchedProd || pid.length > String(matchedProd.id).length) {
+        matchedProd = p;
+      }
+    }
+  });
+
+  const prod = matchedProd;
+  if (!prod) {
+    // fallback para thumb já salvo ou placeholder
+    return item.thumb || "https://via.placeholder.com/120";
+  }
+
+  const imgsMeta = Array.isArray(prod.imagens)
+    ? prod.imagens.map((it) =>
+        typeof it === "string"
+          ? { src: it }
+          : { src: it.src || it.url || "", color: it.color || it.colorName }
+      )
+    : prod.imagem
+    ? [{ src: prod.imagem }]
+    : [];
+
+  // se item.cor estiver presente, procura correspondência por cor
+  if (item.cor) {
+    const corKey = String(item.cor).toLowerCase();
+    const matched = imgsMeta.find(
+      (m) => m.color && String(m.color).toLowerCase() === corKey
+    );
+    if (matched && matched.src) return matched.src;
+    // fallback: substring no src
+    const found = imgsMeta.find(
+      (m) => m.src && String(m.src).toLowerCase().includes(corKey)
+    );
+    if (found && found.src) return found.src;
+  }
+
+  // fallback: primeira imagem do produto (prioriza prod.imagens) ou imagem legacy
+  if (imgsMeta.length && imgsMeta[0].src) return imgsMeta[0].src;
+
+  // se prod.imagens existe mas imgsMeta ficou vazio por algum motivo,
+  // tenta extrair diretamente prod.imagens[0] (string ou objeto)
+  if (Array.isArray(prod.imagens) && prod.imagens.length) {
+    const first = prod.imagens[0];
+    if (typeof first === "string") return first;
+    if (first && typeof first === "object" && (first.src || first.url)) {
+      return first.src || first.url;
+    }
+  }
+
+  return prod.imagem || item.thumb || "https://via.placeholder.com/120";
+}
+
 // ==========================
 // FUNÇÃO GENÉRICA DE RENDERIZAÇÃO
 // ==========================
@@ -63,41 +128,53 @@ function renderCartGeneric({ containerId, totalId, isModal = false }) {
     cart.forEach((item) => {
       total += item.price * item.qty;
       if (isModal) {
+        // usa helper para escolher imagem conforme cor escolhida
+        const thumb = getThumbForItem(item) || "https://via.placeholder.com/50";
         container.innerHTML += `
-          <div class="cart-item-preview">
-            <img src="${item.thumb || "https://via.placeholder.com/50"}" alt="${
-          item.name
-        }">
+          <div class="cart-item-preview" data-cart-id="${item.id}">
+            <img src="${thumb}" alt="${item.name}">
             <div>
               <strong>${item.name}</strong><br>
-              ${item.qty}x R$ ${item.price.toFixed(2)}
+              ${item.qty}x R$ ${item.price.toFixed(2)}<br>
+              <small>Cor: <strong>${
+                item.cor ?? "—"
+              }</strong> — Tamanho: <strong>${
+          item.tamanho ?? "—"
+        }</strong></small><br>
+              <div style="margin-top:.35rem;">
+                <button class="btn btn-outline modal-remove-btn" data-remove-id="${
+                  item.id
+                }">Remover</button>
+              </div>
             </div>
           </div>
         `;
       } else {
+        // USAR getThumbForItem também no carrinho principal para respeitar cor/tamanho escolhidos
+        const thumbNonModal =
+          getThumbForItem(item) ||
+          item.thumb ||
+          "https://via.placeholder.com/120";
         container.innerHTML += `
           <div class="cart-item">
-            <img src="${
-              item.thumb || "https://via.placeholder.com/120"
-            }" alt="${item.name}">
+            <img src="${thumbNonModal}" alt="${item.name}">
             <div class="cart-item-info">
               <strong>${item.name}</strong>
               <span>R$ ${item.price.toFixed(2)}</span>
             </div>
             <div>
-            <div class="cart-item-actions">
-              <button class="qty-btn" onclick="changeQty('${
-                item.id
-              }', -1)">-</button>
-              <span>${item.qty}</span>
-              <button class="qty-btn" onclick="changeQty('${
-                item.id
-              }', 1)">+</button>
+              <div class="cart-item-actions">
+                <button class="qty-btn" onclick="changeQty('${
+                  item.id
+                }', -1)">-</button>
+                <span>${item.qty}</span>
+                <button class="qty-btn" onclick="changeQty('${
+                  item.id
+                }', 1)">+</button>
               </div>
               <a class="remover" href="#" onclick="event.preventDefault(); requestRemove('${
                 item.id
               }')">Remover</a>
-              
             </div>
             <div class="item-total"><strong>R$ ${(
               item.price * item.qty
@@ -109,6 +186,16 @@ function renderCartGeneric({ containerId, totalId, isModal = false }) {
   }
 
   totalEl.textContent = total.toFixed(2);
+
+  // bind para botões de remover dentro da modal (se houver)
+  if (isModal) {
+    container.querySelectorAll(".modal-remove-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const id = btn.dataset.removeId;
+        if (id) requestRemove(id);
+      });
+    });
+  }
 }
 
 // Helpers para chamadas claras
@@ -146,10 +233,9 @@ function updateFloatingCart() {
     cart.forEach((item) => {
       const div = document.createElement("div");
       div.className = "cart-dropdown-item";
+      const thumb = getThumbForItem(item) || "https://via.placeholder.com/50";
       div.innerHTML = `
-        <img src="${item.thumb || "https://via.placeholder.com/50"}" alt="${
-        item.name
-      }">
+        <img src="${thumb}" alt="${item.name}">
         <div>
           <strong>${item.name}</strong><br>
           ${item.qty}x R$ ${item.price.toFixed(2)}
@@ -362,15 +448,24 @@ document.getElementById("confirmar-compra")?.addEventListener("click", () => {
 // ==========================
 // MODAL DO CARRINHO
 // ==========================
+
+// Nota explicativa:
+// O botão flutuante do carrinho possui id="cart-button".
+// Ao clicar, o handler abaixo chama renderCartModal() (que usa renderCartGeneric para popular os itens)
+// e em seguida remove a classe "hidden" do elemento #cart-modal para exibir a modal.
+// Fechamento é tratado por #close-cart-modal e por clique no backdrop (ver listeners abaixo).
+
 document.getElementById("cart-button")?.addEventListener("click", () => {
-  renderCartModal();
-  document.getElementById("cart-modal")?.classList.remove("hidden");
+  renderCartModal(); // popula #cart-modal-items e total em #cart-modal-total
+  document.getElementById("cart-modal")?.classList.remove("hidden"); // mostra a modal
 });
 
+// Fechar modal: botão de fechar (id="close-cart-modal")
 document.getElementById("close-cart-modal")?.addEventListener("click", () => {
   document.getElementById("cart-modal")?.classList.add("hidden");
 });
 
+// Fechar modal clicando fora do conteúdo: o listener verifica se o alvo do clique tem id === "cart-modal"
 document.getElementById("cart-modal")?.addEventListener("click", (e) => {
   if (e.target.id === "cart-modal")
     document.getElementById("cart-modal")?.classList.add("hidden");
@@ -449,5 +544,35 @@ function changeQty(id, delta) {
 // ==========================
 document.addEventListener("DOMContentLoaded", () => {
   updateFloatingCart();
-  renderCart(); // para carrinho.html
+
+  // tenta aguardar window.__produtos (carregado por cms.js) por curto período
+  (function waitProdutos(attempt = 0) {
+    if (window.__produtos && window.__produtos.length > 0) {
+      renderCart(); // renderiza com thumbs corretos
+      return;
+    }
+    if (attempt >= 20) {
+      // timeout: renderiza mesmo assim (usa thumbs salvos no item como fallback)
+      renderCart();
+      return;
+    }
+    setTimeout(() => waitProdutos(attempt + 1), 100); // tenta novamente em 100ms
+  })();
+
+  // handlers para os botões da modal (caso existam)
+  document
+    .getElementById("cart-modal-open-cart")
+    ?.addEventListener("click", () => {
+      window.location.href = "carrinho.html";
+    });
+  document
+    .getElementById("cart-modal-buy-now")
+    ?.addEventListener("click", () => {
+      // sendWhatsAppOrder é definido em js/checkout.js (agregado na index.html)
+      if (typeof sendWhatsAppOrder === "function") {
+        sendWhatsAppOrder();
+      } else {
+        window.location.href = "carrinho.html";
+      }
+    });
 });

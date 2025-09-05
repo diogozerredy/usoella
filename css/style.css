@@ -19,13 +19,19 @@
 }
 
 *{ box-sizing: border-box; }
-html, body{ height: 100%; }
+html {
+  height: 100%;
+  overflow-y: scroll; /* mantém a barra de rolagem vertical sempre visível para evitar shift */
+  scrollbar-gutter: stable; /* reserva espaço para a barra de rolagem (evita alterações de largura) */
+}
 body{
+  height: 100%;
   margin: 0;
   font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
   color: var(--ink-900);
   background: var(--bg);
-  line-height: 1.6;
+  display: flex;
+  justify-self: center;
 }
 
 img{ max-width: 100%; display:block; }
@@ -106,7 +112,7 @@ img{ max-width: 100%; display:block; }
 /* =====================
    Hero / Banner
 ===================== */
-.overlay{ max-width: 1500px; }
+.overlay{ max-width: 1500px; width: 100%; }
 .hero{ background: var(--Primary); }
 .hero-grid{
   display: grid;
@@ -706,7 +712,7 @@ img{ max-width: 100%; display:block; }
 ===================== */
 @media (max-width: 980px){
   .hero-grid, .sobre-grid{ grid-template-columns: 1fr; }
-  .hero-media{ order: -1; }
+  .hero-media{ order: 2;justify-content: center; align-content: center; display: flex; }
   .cart-layout { grid-template-columns: 1fr; }
   .cart-item-info { text-align: center; }
 }

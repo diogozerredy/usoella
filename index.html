@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/css/filter.css" />
     <link rel="stylesheet" href="/css/modalbuycar.css" />
   </head>
-  <body style="background-color: rgba(191, 108, 151,0.8); display: flex; justify-content: center;">
+  <body style="background-color: rgba(191, 108, 151,0.8);">
     <div class="overlay">
     <header class="site-header">
       <div class="container header-grid">
@@ -154,7 +154,11 @@
         <h3>Meu Carrinho</h3>
         <div id="cart-modal-items"></div>
         <p><strong>Total:</strong> R$ <span id="cart-modal-total">0,00</span></p>
-        <a href="carrinho.html" class="btn btn-primary" style="margin-top:1rem;">Ver Carrinho Completo</a>
+        <!-- ALTERAÇÃO: dois botões (Abrir Carrinho e Comprar via WhatsApp) -->
+        <div style="display:flex; gap:0.6rem; margin-top:1rem; justify-content: space-between;">
+          <button id="cart-modal-open-cart" class="btn btn-outline" style="flex:1;">Carrinho</button>
+          <button id="cart-modal-buy-now" class="btn btn-primary" style="flex:1;">Comprar (WhatsApp)</button>
+        </div>
       </div>
     </div>
 
@@ -170,7 +174,9 @@
       </div>
     </div>
 
+    <script src="/js/checkout.js"></script>
     <script src="/js/script.js"></script>
     <script src="/js/cms.js"></script>
   </body>
+</html>
 </html>

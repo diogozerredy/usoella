@@ -245,3 +245,16 @@ async function initNovidadesSection() {
 }
 
 document.addEventListener("DOMContentLoaded", initNovidadesSection);
+
+// --- Novo: sempre carregar produtos e popular window.__produtos para uso em outras páginas (ex: carrinho) ---
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const produtos = await fetchProdutosJSON();
+    // assegura que window.__produtos existe para getThumbForItem e demais lógicas
+    window.__produtos = Array.isArray(produtos)
+      ? produtos
+      : window.__produtos || [];
+  } catch (e) {
+    console.error("Erro ao pré-carregar produtos para uso global:", e);
+  }
+});

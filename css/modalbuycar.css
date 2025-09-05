@@ -286,5 +286,123 @@
   }
 }
 
+/* Ajustes para itens dentro da modal do CARRINHO:
+   - botão remover menor
+   - imagem um pouco maior
+   - desloca informações mais para a direita via gap/flex
+*/
+#cart-modal .cart-modal-content .cart-item-preview {
+  display: flex;
+  gap: 1rem;           /* aumenta espaço entre imagem e detalhes */
+  align-items: flex-start;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+#cart-modal .cart-modal-content .cart-item-preview img {
+  width: 100px;        /* aumentado levemente (antes ~84px) */
+  height: auto;
+  max-height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex: 0 0 100px;     /* mantém tamanho fixo dentro do flex */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+}
+
+/* área de detalhes fica à direita e usa o espaço restante */
+#cart-modal .cart-modal-content .cart-item-preview > div {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+/* Botão remover: menor e mais discreto */
+#cart-modal .cart-modal-content .modal-remove-btn {
+  padding: 0.22rem 0.45rem;
+  font-size: 0.76rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: transparent;
+  color: var(--ink-700);
+  align-self: flex-end;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+/* Hover sutil para o botão remover (mantém legibilidade) */
+#cart-modal .cart-modal-content .modal-remove-btn:hover {
+  background: rgba(0,0,0,0.04);
+  color: #c9302c;
+  border-color: rgba(201,48,44,0.12);
+}
+
+/* Responsivo: mantém empilhamento no mobile sem aumentar a modal */
+@media (max-width: 820px) {
+  /* mantém a modal do carrinho dentro da largura disponível */
+  #cart-modal .cart-modal-content {
+    max-width: 92%;
+    padding: 0.75rem;
+  }
+
+  /* NO CELULAR: imagem à esquerda (pequena) + infos à direita */
+  #cart-modal .cart-modal-content .cart-item-preview {
+    flex-direction: row;    /* manter em linha para imagem à esquerda */
+    align-items: center;
+    gap: 0.6rem;            /* espaço entre imagem e detalhes */
+    padding: 0.45rem 0;
+  }
+
+  /* imagem reduzida para caber no layout do celular */
+  #cart-modal .cart-modal-content .cart-item-preview img {
+    width: 8em;
+    max-height: none;
+    object-fit: cover;
+    border-radius: 8px;
+    flex: 0 0 56px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+  }
+
+  /* detalhes ocupam o restante do espaço */
+  #cart-modal .cart-modal-content .cart-item-preview > div {
+    /* flex: 1 1 auto; */
+    min-width: 0;
+  }
+
+  /* botão remover menor e alinhado verticalmente ao centro */
+  #cart-modal .cart-modal-content .modal-remove-btn {
+    align-self: center;
+    margin-top: 0;
+    padding: 0.18rem 0.4rem;
+    font-size: 0.74rem;
+  }
+
+  /* rodapé com botões: ocupa largura completa e com espaçamento */
+  #cart-modal .cart-modal-content > div[style] {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  #cart-modal .cart-modal-content > div[style] .btn {
+    width: 100%;
+  }
+}
+
+/* telas muito pequenas: imagem ainda menor para melhor encaixe */
+@media (max-width: 420px) {
+  #cart-modal .cart-modal-content .cart-item-preview img {
+  width: 7em;
+    max-height: none;
+    object-fit: cover;
+    border-radius: 8px;
+    flex: 0 0 56px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+  }
+  #cart-modal .cart-modal-content .modal-remove-btn {
+    padding: 0.16rem 0.36rem;
+    font-size: 0.72rem;
+  }
+}
+
 /* pequenos ajustes estéticos */
 #produto-modal .cart-modal-content h4 { margin: 0 0 .5rem; }
