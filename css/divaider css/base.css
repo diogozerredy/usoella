@@ -1,0 +1,37 @@
+:root{
+  --Primary: #BF6C97;      /* fundo / destaque */
+  --secundary: #e2bc56;    /* flor / detalhes */
+  --rose-50: #f6e7e4;
+  --rose-100: #f1d9d6;
+  --rose-200: #e8c7c3;
+  --rose-300: #d6a7a3;
+  --rose-500: #be7f7b;
+  --rose-700: #905b57;
+  --ink-900: #2b2b2b;
+  --ink-700: #4a4a4a;
+  --bg: #fff8f6;
+  --container: 1100px;
+  --radius-xl: 18px;
+  --shadow-soft: 0 10px 30px rgba(0,0,0,.05);
+}
+
+*{ box-sizing: border-box; }
+html {
+  height: 100%;
+  overflow-y: scroll; /* mantém a barra de rolagem vertical sempre visível para evitar shift */
+  scrollbar-gutter: stable; /* reserva espaço para a barra de rolagem (evita alterações de largura) */
+}
+body{
+  height: 100%;
+  margin: 0;
+  font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+  color: var(--ink-900);
+  background: var(--bg);
+  display: flex;
+  justify-content: center;}
+
+  .container{
+  width: min(100% - 4rem, var(--container));
+  margin-inline: auto;
+  text-align: center;
+}

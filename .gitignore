@@ -6,3 +6,5 @@
 .gitignore
 *.log
 /admin/index.html.bak
+css/style.css
+css/style.txt

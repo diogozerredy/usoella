@@ -1,0 +1,222 @@
+/* =====================
+   Modal Carrinho
+===================== */
+.cart-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+.cart-modal.hidden { display: none; }
+.cart-modal-content {
+  background: #fff;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  text-align: left;
+}
+.cart-modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif;
+}
+.cart-modal-content p { margin: 0.5rem 0; }
+.cart-item-preview {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 0.8rem;
+}
+.cart-item-preview img {
+  width: 55px;
+  height: 65px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--ink-700);
+}
+
+/* =====================
+   Itens no Carrinho
+===================== */
+.cart-item {
+  display: grid;
+  grid-template-columns: auto 2fr 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  gap: 0.5rem 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.cart-item img {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100px;
+  height: 120px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.cart-item-info {
+  grid-column: 2;
+  grid-row: 1;
+}
+.cart-item-actions {
+  grid-column: 3;
+  grid-row: 1;
+}
+.cart-item-actions + a {
+
+  font-size: 0.8rem;
+  color: var(--ink-700);
+  text-decoration: underline;
+  text-align: center;
+  margin-top: 0.5rem;
+  display: block;
+ 
+}
+.cart-item-actions + a:hover {
+
+  color: red;
+
+}
+.cart-item .item-total {
+  grid-column: 4;
+  grid-row: 1;
+  justify-self: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.qty-btn {
+  background: #f3f3f3;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+}
+.cart-summary {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+.cart-summary p { margin: 0.5rem 0; }
+.cart-summary .total {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+.cart-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  align-items: flex-start;
+  text-align: left;
+}
+#cart-items-container { width: 100%; }
+.cart-header {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr;
+  padding: 0 1rem 0.5rem;
+  border-bottom: 1px solid #eee;
+  font-weight: 600;
+  color: var(--ink-700);
+  margin-bottom: 1rem;
+}
+.header-qty, .header-total { text-align: center; }
+.cart-item-info { font-size: 0.95rem; }
+.cart-item-info strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+.cart-item-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #f7f7f7;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 0.1rem;
+}
+.cart-item-actions span {
+  min-width: 20px;
+  text-align: center;
+}
+.cart-item-actions .qty-btn {
+  background: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.cart-item .item-total {
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/* =====================
+   Resumo do Pedido
+===================== */
+.cart-summary-card {
+  align-self: center;
+  justify-self: center;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  position: sticky;
+  top: 2rem;
+  min-width: 90%;
+}
+.cart-summary-card h3 {
+  margin-top: 0;
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.summary-total .total-price {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--secundary);
+}
+.btn-full {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+}
+.btn-link {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  color: var(--ink-700);
+  text-decoration: none;
+}
+.btn-link:hover { text-decoration: underline; }

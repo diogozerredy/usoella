@@ -1,0 +1,244 @@
+/* =====================
+   Hero / Banner
+===================== */
+.overlay{ max-width: 1500px; width: 100%; }
+.hero{ background: var(--Primary); }
+.hero-grid{
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 2em 0 2rem;
+}
+.hero-copy{ padding-bottom: 2rem;}
+.hero-copy h1{
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: clamp(1.5rem, 2.6vw + 1rem, 2.5rem);
+  line-height: 1.2;
+  color: var(--ink-900);
+  margin: 0 0 1.75rem;
+  max-width: 500px;
+}
+.btn{
+  display:inline-block;
+  padding: .9rem 1.2rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: .02em;
+  cursor: pointer;
+}
+.btn-primary{
+  background: var(--secundary);
+  color: #fff;
+  box-shadow: var(--shadow-soft);
+  letter-spacing: 0.05em;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+}
+.btn-primary:hover{ filter: brightness(.95); }
+.btn-outline{
+  background: transparent;
+  color: var(--ink-900);
+  border-color: var(--ink-900);
+}
+.btn-outline:hover{ background: rgba(0,0,0,.05);color: var(--secundary);
+  border-color: var(--secundary); }
+
+.hero-media {display:flex; justify-content: center; }
+.hero-media img{
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  object-fit: cover;
+  width: 16em;
+  height: 100%;
+}
+
+/* =====================
+   Novidades (Grid) - bloco unificado para evitar duplicações
+ ====================== */
+.novidades{
+  background: #fff;
+  padding: 3rem 0;
+}
+.novidades h2{
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  margin: 0 0 1.5rem;
+}
+
+.cards-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 2rem;
+  gap: 2rem;
+}
+
+/* card base */
+.card{
+  background: #fff;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+  align-items: start;
+}
+
+/* thumb unificada: posicionamento para setas + aspecto e limites */
+.card .thumb{
+  position: relative;            /* para posicionar setas sobre a imagem */
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  max-height: 480px;
+  overflow: hidden;
+  background: #faf6f6;
+  display: block;
+  border-radius: 12px 12px 0 0;
+}
+
+/* imagem do thumb: preenche o container com cover (visual consistente) */
+.card .thumb img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* setas do card (pequenas, translúcidas) - sempre uma de cada lado */
+.card .thumb .card-prev,
+.card .thumb .card-next{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(0,0,0,0.18);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: background .12s ease, transform .08s ease, opacity .12s ease;
+  opacity: 0.95;
+}
+.card .thumb .card-prev{ left: 8px; right: auto; }
+.card .thumb .card-next{ right: 8px; left: auto; }
+.card .thumb .card-prev:hover,
+.card .thumb .card-next:hover{
+  background: rgba(0,0,0,0.26);
+  transform: translateY(-50%) scale(1.03);
+}
+
+/* corpo do card (unificado) */
+.card-body{
+  padding: 0.85rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: .1rem;
+  align-items: start;
+}
+.card-body h3{
+  margin: .25rem 0 .25rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.price{
+  color: var(--ink-700);
+  font-weight: 700;
+  margin: .25rem 0 0.25rem;
+}
+
+
+/* =====================
+   Sobre (Grid)
+===================== */
+.sobre{
+  background: var(--Primary);
+  padding: 2rem 0 1rem;
+}
+.sobre-grid{
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 0 .5rem ;
+  width: 80%;
+}
+.sobre h2{
+  font-family: 'Playfair Display', serif;
+  margin: 0 0 .5rem;
+}
+.sobre-texto p{
+  margin: 0;
+  max-width: 60ch;
+}
+.sobre-media{
+  justify-self: center;
+  align-self: center;
+}
+.sobre-media img{
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  padding: 0 .3rem;
+  width: 15em;
+  height: auto;
+}
+.espaco{ height: 1px; }
+
+/* =====================
+   Contato
+===================== */
+.contato {
+  background: var(--Primary);
+  color: #fff;
+  padding: 1rem 1rem;
+  text-align: center;
+}
+.contato h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+.contato p {
+  font-size: 1rem;
+}
+.contato-links {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.contato-links .btn i {
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+.social-link {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* =====================
+   Footer
+===================== */
+.site-footer{
+  border-top: 1px solid rgba(0,0,0,.08);
+  background: #fff;
+  padding: 1rem 0;
+  text-align: center;
+  color: var(--ink-700);
+  font-size: .95rem;
+}

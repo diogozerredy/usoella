@@ -1,23 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>USOELLA — Moda delicada</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="css/divaider css/base.css">
-    <link rel="stylesheet" href="css/divaider css/home.css">
-    <link rel="stylesheet" href="css/divaider css/layout.css">
-    <link rel="stylesheet" href="css/divaider css/cart.css">
-    <link rel="stylesheet" href="css/divaider css/modal.css">
-    <link rel="stylesheet" href="css/filter.css">
-    <link rel="stylesheet" href="css/modalbuycar.css">
-
-
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop | USOELLA</title>
+<link rel="stylesheet" href="css/divaider css/base.css">
+<link rel="stylesheet" href="css/divaider css//layout.css">
+<link rel="stylesheet" href="css/shop.css">
+<link rel="stylesheet" href="css/divaider css//cart.css">
+<link rel="stylesheet" href="css/divaider css//modal.css">
+<link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/modalbuycar.css">
+</head>
+  <!-- Navbar -->
   <body style="background-color: rgba(191, 108, 151,0.8);">
     <div class="overlay">
     <header class="site-header">
@@ -30,88 +25,40 @@
 
         <nav id="primary-nav" class="nav">
           <ul>
-            <li><a href="#home">Home</a></li>
+            <li><a href="./index.html">Home</a></li>
             <li><a href="./shop.html">Shop</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="/index.html#about">About</a></li>
+            <li><a href="/index.html#contact">Contact</a></li>
           </ul>
         </nav>
       </div>
     </header>
 
-    <main id="home">
-      <!-- HERO / BANNER -->
-     <section class="hero">
-  <div class="container hero-grid">
-    <div class="hero-copy">
-      <h1 id="hero-title" style="color: #fff;"></h1>
-      <a href="#" class="btn btn-primary" id="hero-cta"></a>
+  <!-- Hero da Loja (agora carrossel gerenciado pelo CMS) -->
+  <section class="shop-hero">
+    <div>
+      <!-- o JS (initShopHero) vai popular este elemento com as imagens do CMS -->
+      <div id="shop-hero-carousel" class="shop-hero-carousel" aria-live="polite">
+        <!-- Conteúdo injetado via JS -->
+      </div>
     </div>
-    <div class="hero-media">
-      <img id="hero-img" src="" alt="Banner Hero" />
-    </div>
-  </div>
-</section>
+  </section>
 
 
-  <!-- NOVIDADES  em breve
-  -->
-<section id="novidades" class="novidades">
-  <div class="container novidades-grid">
-    <h2>NOVIDADES</h2>
+  <section class="novidades">
+     <main class="shop-grid container">
+      <div class="container">
     <div id="product-filters" class="filters"></div>
     <div class="cards-grid" id="product-list"></div>
     <div id="novidades-empty" style="display:none; padding:2rem 0;">
       <p><em>Novidades em breve ✨</em></p>
     </div>
-    <div style="margin-top:2rem;">
-      <a href="shop.html" class="btn btn-primary">Conheça a Coleção</a>
-    </div>
-  </div>
-</section>
-
-      <!-- SOBRE -->
-      <section id="about" class="sobre">
-        <div class="container sobre-grid">
-          <div class="sobre-texto">
-            <h2 style="color: #fff;">SOBRE A USOELLA</h2>
-            <p style="color: #fff;">
-              Nossa história começou em homenagem à nossa filha Ariella, que nos inspira a criar
-              roupas delicadas e estilosas. Aqui, valor e beleza são o que guiamos.
-            </p>
-          </div>
-          <div class="sobre-media">
-            <img src="https://picsum.photos/id/1027/740/900" alt="Mãe com bebê"/>
-          </div>
-        </div>
-      </section>
-
-      <!-- CONTATO -->
-      <section id="contact" class="contato">
-        <div class="contato-grid">
-          <h2>Entre em Contato</h2>
-          <p>Fale com a gente pelas redes sociais:</p>
-          <div class="contato-links">
-            <a href="https://wa.me/5599999999999" target="_blank" class="btn social-link">
-              <i class="fab fa-whatsapp"></i> WhatsApp
-            </a>
-            <a href="https://instagram.com/seuinstagram" target="_blank" class="btn social-link">
-              <i class="fab fa-instagram"></i> Instagram
-            </a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="container">
-        <p>© 2025 USOELLA. Todos os direitos reservados.</p>
-      </div>
-    </footer>
+      </div></main>
+  </section>
     </div>
 
-    <!-- Carrinho Flutuante -->
-    <div id="floating-cart">
+
+ <div id="floating-cart">
       <button id="cart-button">
         🛒 <span id="cart-count">0</span>
       </button>
@@ -180,10 +127,7 @@
         </div>
       </div>
     </div>
-
-    <script src="/js/checkout.js"></script>
-    <script src="/js/script.js"></script>
-    <script src="/js/cms.js"></script>
-    <script src="/js/hero.js"></script>
-  </body>
+  <script defer src="js/cms.js"></script>
+  <script defer src="js/script.js"></script>
+</body>
 </html>

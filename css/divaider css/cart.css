@@ -1,0 +1,109 @@
+/* =====================
+   Carrinho Flutuante
+===================== */
+#floating-cart {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2000;
+}
+#cart-button {
+  background: var(--secundary);
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+#cart-count {
+  background: #fff;
+  color: var(--secundary);
+  font-weight: bold;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+#cart-dropdown {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  padding: 1rem;
+  width: 280px;
+  max-height: 350px;
+  overflow-y: auto;
+}
+#cart-dropdown.hidden { display: none; }
+#cart-dropdown h4 {
+  margin: 0 0 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.cart-dropdown-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  gap: 0.6rem;
+}
+.cart-dropdown-item img {
+  width: 45px;
+  height: 55px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+/* =====================
+   Resumo do Pedido
+===================== */
+.cart-summary-card {
+  align-self: center;
+  justify-self: center;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  position: sticky;
+  top: 2rem;
+  min-width: 90%;
+}
+.cart-summary-card h3 {
+  margin-top: 0;
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.summary-total .total-price {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--secundary);
+}
+.btn-full {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+}
+.btn-link {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  color: var(--ink-700);
+  text-decoration: none;
+}
+.btn-link:hover { text-decoration: underline; }
