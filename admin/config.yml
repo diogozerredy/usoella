@@ -2,7 +2,7 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "images/uploads"
+media_folder: "static/images/uploads"
 public_folder: "/images/uploads"
 
 publish_mode: editorial_workflow
@@ -64,12 +64,16 @@ collections:
                 name: "produtos"
                 widget: "list"
                 field: { label: "ID do produto", name: "id", widget: "string" }
-                
-      - file: "data/hero.json"
-        label: "Seção Hero"
-        name: "hero"
-        fields:
-          - { name: "titulo", label: "Título", widget: "string" }
-          - { name: "imagem", label: "Imagem", widget: "image", media_folder: "images", public_folder: "/images" }
-          - { name: "cta", label: "Texto do botão", widget: "string" }
-          - { name: "cta_link", label: "Link do botão", widget: "string" }
+    
+  - name: "hero"
+    label: "Hero"
+    files:
+    - file: "data/hero.json"
+      label: "Seção Hero"
+      name: "hero"
+      fields:
+        - { name: "titulo", label: "Título", widget: "string" }
+        - { name: "imagem", label: "Imagem", widget: "image", media_folder: "static/images", public_folder: "/images" }
+        - { name: "cta", label: "Texto do botão", widget: "string" }
+        - { name: "cta_link", label: "Link do botão", widget: "string" }
+
