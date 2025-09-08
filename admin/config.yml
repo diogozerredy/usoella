@@ -27,9 +27,8 @@ collections:
               - { label: "Preço (R$)", name: "preco", widget: "number", value_type: "float", min: 0 }
               - { label: "Categoria", name: "categoria", widget: "select", options: ["Camisetas","Sapatos","Bolsas","Acessórios","Outros"] }
               - { label: "Imagem (legacy)", name: "imagem", widget: "image", required: false }
-              - { label: "Imafem opcinal", name: "imagem", widget: "image", required: false }
-              - label: "Imagens2"
-                name: "imagens2"
+              - label: "Imagens (opcional, use para cores)"
+                name: "imagens"
                 widget: "list"
                 required: false
                 field:
