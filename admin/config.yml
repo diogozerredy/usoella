@@ -65,9 +65,6 @@ collections:
                 widget: "list"
                 field: { label: "ID do produto", name: "id", widget: "string" }
                 
-  - name: "hero"
-    label: "Hero"
-    files:
       - file: "data/hero.json"
         label: "Seção Hero"
         name: "hero"
