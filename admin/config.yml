@@ -31,9 +31,9 @@ collections:
                 name: "imagens"
                 widget: "list"
                 required: false
-                field:
-                  - { label: "Imagem", name: "src", widget: "image" }
-                  - { label: "Cor (opcional)", name: "color", widget: "string", required: false, hint: "Nome da cor que será associada a esta imagem (ex: rosa, branco)" }
+                fields:
+                    - { label: "Imagem", name: "src", widget: "image" }
+                    - { label: "Cor (opcional)", name: "color", widget: "string", ... }
               - label: "Cores"
                 name: "cores"
                 widget: "list"
