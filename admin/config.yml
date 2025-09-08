@@ -70,10 +70,14 @@ collections:
     files:
     - file: "data/hero.json"
       label: "Seção Hero"
-      name: "hero"
       fields:
+      - label: "Hero Section"
+        name: "hero_section"
+        fields:
         - { name: "titulo", label: "Título", widget: "string" }
         - { name: "imagem", label: "Imagem", widget: "image", media_folder: "static/images", public_folder: "/images" }
         - { name: "cta", label: "Texto do botão", widget: "string" }
         - { name: "cta_link", label: "Link do botão", widget: "string" }
+        field: { label: "ID do produto", name: "id", widget: "string" }
+        
 
