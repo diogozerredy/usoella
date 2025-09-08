@@ -1,6 +1,6 @@
 {
   "titulo": "Moda delicada, estilosa e feita para realçar sua beleza",
-  "imagem": "/images/hero.jpg",
+  "imagem": "/static/images/hero.jpg",
   "cta": "Ver novidades",
   "cta_link": "#novidades"
 }
