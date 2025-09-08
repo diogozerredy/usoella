@@ -21,7 +21,11 @@
       "ativo": true,
       "imagem": "static/images/uploads/whatsapp-image-2025-08-27-at-6.12.05-pm.jpeg",
       "categoria": "Sapatos",
-      "cores": [],
+      "cores": [
+        "ROSA",
+        "VERDE",
+        "VERMELHO"
+      ],
       "nome": "teste",
       "id": "1452",
       "createdAt": "2025-08-31T04:26:13.896Z",
