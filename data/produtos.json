@@ -3,13 +3,16 @@
     {
       "imagens": [
         {
-          "src": "static/images/uploads/whatsapp-image-2025-08-27-at-6.12.05-pm.jpeg"
+          "src": "static/images/uploads/whatsapp-image-2025-08-27-at-6.12.05-pm.jpeg",
+          "color": "ROSA"
         },
         {
-          "src": "static/images/uploads/img1.jpg"
+          "src": "static/images/uploads/img1.jpg",
+          "color": "VERDE"
         },
         {
-          "src": "/static/images/uploads/images.jpg"
+          "src": "/static/images/uploads/images.jpg",
+          "color": "VERMELHO"
         }
       ],
       "destaque": false,
@@ -23,6 +26,56 @@
       "id": "1452",
       "createdAt": "2025-08-31T04:26:13.896Z",
       "tamanhos": ["P", "M"]
+    },
+    {
+      "imagens": [
+        {
+          "src": "static/images/uploads/vestido-rosa.jpg",
+          "color": "rosa"
+        },
+        {
+          "src": "static/images/uploads/vestido-bege.jpg",
+          "color": "bege"
+        },
+        {
+          "src": "static/images/uploads/vestido-branco.jpg",
+          "color": "branco"
+        }
+      ],
+      "destaque": true,
+      "descricao": "Vestido rosê delicado, ótima para eventos.",
+      "preco": 129.9,
+      "ativo": true,
+      "imagem": "static/images/uploads/img1.jpg",
+      "categoria": "Camisetas",
+      "cores": ["rosa", "bege", "branco"],
+      "nome": "Vestido Rosê Delicado",
+      "id": "vestido-rose",
+      "createdAt": "2025-08-30T10:00:00.000Z",
+      "tamanhos": ["p", "m", "g"]
+    },
+    {
+      "imagens": [
+        {
+          "src": "static/images/uploads/bolsa-marrom.jpg",
+          "color": "marrom"
+        },
+        {
+          "src": "static/images/uploads/bolsa-preto.jpg",
+          "color": "preto"
+        }
+      ],
+      "destaque": false,
+      "descricao": "Bolsa pequena charmosa para o dia a dia.",
+      "preco": 79.5,
+      "ativo": true,
+      "imagem": "static/images/uploads/img2.jpg",
+      "categoria": "Bolsas",
+      "cores": ["marrom", "preto"],
+      "nome": "Bolsa Pequena Charmosa",
+      "id": "bolsa-charmosa",
+      "createdAt": "2025-08-29T15:30:00.000Z",
+      "tamanhos": []
     }
   ]
 }
