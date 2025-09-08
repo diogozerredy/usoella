@@ -41,7 +41,8 @@ collections:
               - label: "Tamanhos"
                 name: "tamanhos"
                 widget: "list"
-                field: { label: "Tamanho", name: "tam", widget: "string" }
+                field: 
+              - { label: "Tamanho", name: "tam", widget: "string" }
               - { label: "Link (opcional)", name: "link", widget: "string", required: false }
               - { label: "Destaque", name: "destaque", widget: "boolean", default: false }
               - { label: "Disponível", name: "ativo", widget: "boolean", default: true }
@@ -70,14 +71,10 @@ collections:
     files:
     - file: "data/hero.json"
       label: "Seção Hero"
+      name: "hero"
       fields:
-      - label: "Hero Section"
-        name: "hero_section"
-        fields:
         - { name: "titulo", label: "Título", widget: "string" }
         - { name: "imagem", label: "Imagem", widget: "image", media_folder: "static/images", public_folder: "/images" }
         - { name: "cta", label: "Texto do botão", widget: "string" }
         - { name: "cta_link", label: "Link do botão", widget: "string" }
-        field: { label: "ID do produto", name: "id", widget: "string" }
-        
 
