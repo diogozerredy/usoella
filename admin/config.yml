@@ -3,7 +3,7 @@ backend:
   branch: main
 
 media_folder: "static/images/uploads"
-public_folder: "/images/uploads"
+public_folder: "/static/images/uploads"
 
 publish_mode: editorial_workflow
 
@@ -73,7 +73,7 @@ collections:
       name: "hero"
       fields:
         - { name: "titulo", label: "Título", widget: "string" }
-        - { name: "imagem", label: "Imagem", widget: "image", media_folder: "static/images", public_folder: "/images" }
+        - { name: "imagem", label: "Imagem", widget: "image", media_folder: "static/images", public_folder: "/static/images" }
         - { name: "cta", label: "Texto do botão", widget: "string" }
         - { name: "cta_link", label: "Link do botão", widget: "string" }
 
