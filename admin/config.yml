@@ -73,6 +73,6 @@ collections:
         name: "hero"
         fields:
           - { name: "titulo", label: "Título", widget: "string" }
-          - { name: "imagem", label: "Imagem", widget: "image" }
+          - { name: "imagem", label: "Imagem", widget: "image", media_folder: "images", public_folder: "/images" }
           - { name: "cta", label: "Texto do botão", widget: "string" }
           - { name: "cta_link", label: "Link do botão", widget: "string" }
