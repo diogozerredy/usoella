@@ -5,18 +5,18 @@
       "descricao": "isso e um teste de como vai ficar",
       "preco": 15,
       "ativo": true,
-      "imagem": "/images/uploads/whatsapp-image-2025-08-27-at-6.12.05-pm.jpeg",
+      "imagem": "static/images/uploads/whatsapp-image-2025-08-27-at-6.12.05-pm.jpeg",
       "imagens": [
         {
-          "src": "/images/uploads/whatsapp-image-2025-08-27-at-6.12.05-pm.jpeg",
+          "src": "static/images/uploads/whatsapp-image-2025-08-27-at-6.12.05-pm.jpeg",
           "color": "verde"
         },
         {
-          "src": "/images/uploads/img1.jpg",
+          "src": "static/images/uploads/img1.jpg",
           "color": "azul"
         },
         {
-          "src": "/images/imgs/model car mobil.png",
+          "src": "static/images/imgs/model car mobil.png",
           "color": "amarelo"
         }
       ],
@@ -32,11 +32,11 @@
       "descricao": "Vestido rosê delicado, ótima para eventos.",
       "preco": 129.9,
       "ativo": true,
-      "imagem": "/images/uploads/img1.jpg",
+      "imagem": "static/images/uploads/img1.jpg",
       "imagens": [
-        { "src": "/images/uploads/vestido-rosa.jpg", "color": "rosa" },
-        { "src": "/images/uploads/vestido-bege.jpg", "color": "bege" },
-        { "src": "/images/uploads/vestido-branco.jpg", "color": "branco" }
+        { "src": "static/images/uploads/vestido-rosa.jpg", "color": "rosa" },
+        { "src": "static/images/uploads/vestido-bege.jpg", "color": "bege" },
+        { "src": "static/images/uploads/vestido-branco.jpg", "color": "branco" }
       ],
       "categoria": "Camisetas",
       "cores": ["rosa", "bege", "branco"],
@@ -50,10 +50,10 @@
       "descricao": "Bolsa pequena charmosa para o dia a dia.",
       "preco": 79.5,
       "ativo": true,
-      "imagem": "/images/uploads/img2.jpg",
+      "imagem": "static/images/uploads/img2.jpg",
       "imagens": [
-        { "src": "/images/uploads/bolsa-marrom.jpg", "color": "marrom" },
-        { "src": "/images/uploads/bolsa-preto.jpg", "color": "preto" }
+        { "src": "static/images/uploads/bolsa-marrom.jpg", "color": "marrom" },
+        { "src": "static/images/uploads/bolsa-preto.jpg", "color": "preto" }
       ],
       "categoria": "Bolsas",
       "cores": ["marrom", "preto"],
