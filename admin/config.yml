@@ -33,11 +33,7 @@ collections:
                 required: false
                 fields:
                     - { label: "Imagem", name: "src", widget: "image" }
-                    - { label: "Cor (opcional)", name: "color", widget: "string", ... }
-              - label: "Cores"
-                name: "cores"
-                widget: "list"
-                field: { label: "Cor", name: "cor", widget: "string" }
+                    - { label: "Cor (opcional)", name: "cores", widget: "string"}
               - label: "Tamanhos"
                 name: "tamanhos"
                 widget: "list"
