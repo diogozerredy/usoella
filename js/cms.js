@@ -77,7 +77,7 @@ function productCardHTML(p) {
         <h3>${p.nome || ""}</h3>
         <div class="price">R$ ${price.toFixed(2)}</div>
         <button class="btn btn-primary btn-open-product" data-id="${p.id}">
-          Ver / Adicionar
+          Ver detalhes
         </button>
       </div>
     </article>

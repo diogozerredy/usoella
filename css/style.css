@@ -828,4 +828,5 @@ img{ max-width: 100%; display:block; }
   }
   .card .thumb .card-prev { left: 6px; right: auto; }
   .card .thumb .card-next { right: 6px; left: auto; }
+  
 }

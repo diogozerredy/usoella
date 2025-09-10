@@ -95,11 +95,11 @@
   .cart-layout { grid-template-columns: 1fr; }
   .cart-item-info { text-align: center; }
 .carousel-btn.prev {
-   display: none;
+   display: none !important
   }
   
-  .carousel-btn.next {
-    display: none
+.carousel-btn.next {
+    display: none !important;
   }
 
 }
