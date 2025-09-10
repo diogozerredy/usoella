@@ -242,3 +242,69 @@
   color: var(--ink-700);
   font-size: .95rem;
 }
+
+/* =====================
+   Novidades Carousel (Desktop)
+===================== */
+@media (min-width: 981px) {
+  .carousel-container {
+    position: relative;
+    padding: 0 2rem;
+  }
+
+  .carousel-track-container {
+    overflow: hidden;
+  }
+
+  .cards-grid.carousel-track {
+    display: flex;
+    padding: 2rem 0;
+    margin: 0;
+    gap: 0;
+    transition: transform 0.5s ease-in-out;
+  }
+
+  .carousel-track .card {
+    flex: 0 0 25%;
+    max-width: 25%;
+    box-sizing: border-box;
+    padding: 0 1rem;
+  }
+
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #eee;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 1.5rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: background .2s ease;
+  }
+  
+  .carousel-btn:hover {
+    background: #fff;
+  }
+  
+  .carousel-btn.prev {
+    left: 0;
+  }
+  
+  .carousel-btn.next {
+    right: 0;
+  }
+
+  .carousel-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}

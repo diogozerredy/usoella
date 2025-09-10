@@ -40,8 +40,7 @@
     </header>
 
     <main id="home">
-      <!-- HERO / BANNER -->
-     <section class="hero">
+      <section class="hero">
   <div class="container hero-grid">
     <div class="hero-copy">
       <h1 id="hero-title" style="color: #fff;"></h1>
@@ -54,23 +53,29 @@
 </section>
 
 
-  <!-- NOVIDADES  em breve
-  -->
-<section id="novidades" class="novidades">
-  <div class="container novidades-grid">
-    <h2>NOVIDADES</h2>
-    <div id="product-filters" class="filters"></div>
-    <div class="cards-grid" id="product-list"></div>
-    <div id="novidades-empty" style="display:none; padding:2rem 0;">
-      <p><em>Novidades em breve ✨</em></p>
-    </div>
-    <div style="margin-top:2rem;">
-      <a href="shop.html" class="btn btn-primary">Conheça a Coleção</a>
-    </div>
-  </div>
-</section>
+  <section id="novidades" class="novidades">
+    <div class="container novidades-grid">
+      <h2>NOVIDADES</h2>
+      <div id="product-filters" class="filters" style="display: none;"></div>
+      
+      <div class="carousel-container">
+        <button class="carousel-btn prev" id="novidades-prev">&#10094;</button>
+        <div class="carousel-track-container">
+          <div class="cards-grid carousel-track" id="product-list">
+            </div>
+        </div>
+        <button class="carousel-btn next" id="novidades-next">&#10095;</button>
+      </div>
 
-      <!-- SOBRE -->
+      <div id="novidades-empty" style="display:none; padding:2rem 0;">
+        <p><em>Novidades em breve ✨</em></p>
+      </div>
+      <div style="margin-top:2rem;">
+        <a href="shop.html" class="btn btn-primary">Conheça a Coleção</a>
+      </div>
+    </div>
+  </section>
+
       <section id="about" class="sobre">
         <div class="container sobre-grid">
           <div class="sobre-texto">
@@ -86,7 +91,6 @@
         </div>
       </section>
 
-      <!-- CONTATO -->
       <section id="contact" class="contato">
         <div class="contato-grid">
           <h2>Entre em Contato</h2>
@@ -110,7 +114,6 @@
     </footer>
     </div>
 
-    <!-- Carrinho Flutuante -->
     <div id="floating-cart">
       <button id="cart-button">
         🛒 <span id="cart-count">0</span>
@@ -122,7 +125,6 @@
       </div>
     </div>
 
-    <!-- Modal do Produto (estilo Shein) -->
     <div id="produto-modal" class="cart-modal hidden">
       <div class="cart-modal-content">
         <span id="close-produto-modal" class="close-btn">&times;</span>
@@ -148,20 +150,19 @@
             <div id="modal-tamanhos" class="opcoes-grid"></div>
             <p id="modal-tamanho-unico" style="display:none;"><em>Tamanho Único (M)</em></p>
           </div>
+          <p id="modal-produto-descricao" class="modal-produto-descricao"></p>
         </div>
 
         <button id="confirmar-compra" disabled class="btn btn-primary">Confirmar Compra</button>
       </div>
     </div>
 
-    <!-- Modal do Carrinho -->
     <div id="cart-modal" class="cart-modal hidden">
       <div class="cart-modal-content">
         <span id="close-cart-modal" class="close-btn">&times;</span>
         <h3>Meu Carrinho</h3>
         <div id="cart-modal-items"></div>
         <p><strong>Total:</strong> R$ <span id="cart-modal-total">0,00</span></p>
-        <!-- ALTERAÇÃO: dois botões (Abrir Carrinho e Comprar via WhatsApp) -->
         <div style="display:flex; gap:0.6rem; margin-top:1rem; justify-content: space-between;">
           <button id="cart-modal-open-cart" class="btn btn-outline" style="flex:1;">Carrinho</button>
           <button id="cart-modal-buy-now" class="btn btn-primary" style="flex:1;">Comprar (WhatsApp)</button>
@@ -169,7 +170,6 @@
       </div>
     </div>
 
-    <!-- Modal de confirmação de remoção -->
     <div id="remove-confirm-modal" class="cart-modal hidden">
       <div class="cart-modal-content">
         <h3>Remover item</h3>

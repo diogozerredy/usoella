@@ -45,19 +45,20 @@ function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-// --- Novo helper: resolve thumb do item baseado no produto original e cor ---
 function getThumbForItem(item) {
   const itemId = String(item.id || "");
   const produtos = window.__produtos || [];
   if (!itemId) return item.thumb || "https://via.placeholder.com/120";
 
-  // procura o produto cujo id seja prefixo de itemId (ex: 'vestido-rose' é prefixo de 'vestido-rose-rosa-p')
-  // escolhe o match com maior comprimento de id para evitar colisões
   let matchedProd = null;
   produtos.forEach((p) => {
     const pid = String(p.id || "");
     if (!pid) return;
-    if (itemId === pid || itemId.startsWith(pid + "-") || itemId.startsWith(pid)) {
+    if (
+      itemId === pid ||
+      itemId.startsWith(pid + "-") ||
+      itemId.startsWith(pid)
+    ) {
       if (!matchedProd || pid.length > String(matchedProd.id).length) {
         matchedProd = p;
       }
@@ -66,7 +67,6 @@ function getThumbForItem(item) {
 
   const prod = matchedProd;
   if (!prod) {
-    // fallback para thumb já salvo ou placeholder
     return item.thumb || "https://via.placeholder.com/120";
   }
 
@@ -80,25 +80,20 @@ function getThumbForItem(item) {
     ? [{ src: prod.imagem }]
     : [];
 
-  // se item.cor estiver presente, procura correspondência por cor
   if (item.cor) {
     const corKey = String(item.cor).toLowerCase();
     const matched = imgsMeta.find(
       (m) => m.color && String(m.color).toLowerCase() === corKey
     );
     if (matched && matched.src) return matched.src;
-    // fallback: substring no src
     const found = imgsMeta.find(
       (m) => m.src && String(m.src).toLowerCase().includes(corKey)
     );
     if (found && found.src) return found.src;
   }
 
-  // fallback: primeira imagem do produto (prioriza prod.imagens) ou imagem legacy
   if (imgsMeta.length && imgsMeta[0].src) return imgsMeta[0].src;
 
-  // se prod.imagens existe mas imgsMeta ficou vazio por algum motivo,
-  // tenta extrair diretamente prod.imagens[0] (string ou objeto)
   if (Array.isArray(prod.imagens) && prod.imagens.length) {
     const first = prod.imagens[0];
     if (typeof first === "string") return first;
@@ -111,7 +106,7 @@ function getThumbForItem(item) {
 }
 
 // ==========================
-// FUNÇÃO GENÉRICA DE RENDERIZAÇÃO
+// RENDERIZAÇÃO DO CARRINHO
 // ==========================
 function renderCartGeneric({ containerId, totalId, isModal = false }) {
   const cart = loadCart();
@@ -127,9 +122,8 @@ function renderCartGeneric({ containerId, totalId, isModal = false }) {
   } else {
     cart.forEach((item) => {
       total += item.price * item.qty;
+      const thumb = getThumbForItem(item) || "https://via.placeholder.com/120";
       if (isModal) {
-        // usa helper para escolher imagem conforme cor escolhida
-        const thumb = getThumbForItem(item) || "https://via.placeholder.com/50";
         container.innerHTML += `
           <div class="cart-item-preview" data-cart-id="${item.id}">
             <img src="${thumb}" alt="${item.name}">
@@ -150,14 +144,9 @@ function renderCartGeneric({ containerId, totalId, isModal = false }) {
           </div>
         `;
       } else {
-        // USAR getThumbForItem também no carrinho principal para respeitar cor/tamanho escolhidos
-        const thumbNonModal =
-          getThumbForItem(item) ||
-          item.thumb ||
-          "https://via.placeholder.com/120";
         container.innerHTML += `
           <div class="cart-item">
-            <img src="${thumbNonModal}" alt="${item.name}">
+            <img src="${thumb}" alt="${item.name}">
             <div class="cart-item-info">
               <strong>${item.name}</strong>
               <span>R$ ${item.price.toFixed(2)}</span>
@@ -187,10 +176,9 @@ function renderCartGeneric({ containerId, totalId, isModal = false }) {
 
   totalEl.textContent = total.toFixed(2);
 
-  // bind para botões de remover dentro da modal (se houver)
   if (isModal) {
     container.querySelectorAll(".modal-remove-btn").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
+      btn.addEventListener("click", () => {
         const id = btn.dataset.removeId;
         if (id) requestRemove(id);
       });
@@ -198,7 +186,6 @@ function renderCartGeneric({ containerId, totalId, isModal = false }) {
   }
 }
 
-// Helpers para chamadas claras
 function renderCart(containerId = "cart-items", totalId = "subtotal") {
   renderCartGeneric({ containerId, totalId, isModal: false });
 }
@@ -217,44 +204,19 @@ function renderCartModal() {
 function updateFloatingCart() {
   const cart = loadCart();
   const countEl = document.getElementById("cart-count");
-  const dropdown = document.getElementById("cart-dropdown-items");
-
-  if (countEl) {
-    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-    countEl.textContent = totalQty;
-  }
-
-  if (!dropdown) return;
-  dropdown.innerHTML = "";
-
-  if (cart.length === 0) {
-    dropdown.innerHTML = "<p>Seu carrinho está vazio.</p>";
-  } else {
-    cart.forEach((item) => {
-      const div = document.createElement("div");
-      div.className = "cart-dropdown-item";
-      const thumb = getThumbForItem(item) || "https://via.placeholder.com/50";
-      div.innerHTML = `
-        <img src="${thumb}" alt="${item.name}">
-        <div>
-          <strong>${item.name}</strong><br>
-          ${item.qty}x R$ ${item.price.toFixed(2)}
-        </div>
-      `;
-      dropdown.appendChild(div);
-    });
-  }
+  if (!countEl) return;
+  countEl.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
 }
 
 // ==========================
-// MODAL DE PRODUTO (Shein-like)
+// MODAL DE PRODUTO
 // ==========================
 let selectedProduct = null;
 let selectedColor = null;
 let selectedSize = null;
 let selectedImageIndex = 0;
-let modalImages = []; // array de src strings
-let modalImagesMeta = []; // array de { src, color? }
+let modalImages = [];
+let modalImagesMeta = [];
 
 function updateModalImage(index) {
   const img = document.getElementById("modal-produto-img");
@@ -263,7 +225,6 @@ function updateModalImage(index) {
   if (index >= modalImages.length) index = 0;
   selectedImageIndex = index;
   img.src = modalImages[selectedImageIndex] || "";
-  // atualiza indicadores visuais se houver (opcional)
 }
 
 function openProductModal(product) {
@@ -274,7 +235,6 @@ function openProductModal(product) {
   modalImages = [];
   modalImagesMeta = [];
 
-  // Normaliza imagens: pode ser array de strings ou objetos { src, color }
   if (Array.isArray(product.imagens)) {
     product.imagens.forEach((it) => {
       if (typeof it === "string") {
@@ -297,64 +257,55 @@ function openProductModal(product) {
   const modal = document.getElementById("produto-modal");
   const nome = document.getElementById("modal-produto-nome");
   const preco = document.getElementById("modal-produto-preco");
+  const descricao = document.getElementById("modal-produto-descricao"); // Pega o elemento da descrição
   const img = document.getElementById("modal-produto-img");
   const coresContainer = document.getElementById("modal-cores");
   const tamanhosContainer = document.getElementById("modal-tamanhos");
   const btnConfirmar = document.getElementById("confirmar-compra");
-  const prevBtn = modal.querySelector(".carousel-prev");
-  const nextBtn = modal.querySelector(".carousel-next");
 
   nome.textContent = product.nome;
   preco.textContent = `R$ ${product.preco.toFixed(2)}`;
+  descricao.textContent = product.descricao || ""; // Adiciona a descrição
   img.src = modalImages[0] || "https://via.placeholder.com/200";
 
-  // Render cores e associar diretamente imagem baseada em meta.color quando existir
+  // Render cores
   coresContainer.innerHTML = "";
-  if (product.cores?.length > 0) {
-    product.cores.forEach((cor) => {
+  const productColors = modalImagesMeta
+    .map((imgMeta) => imgMeta.color)
+    .filter((color, index, self) => color && self.indexOf(color) === index);
+
+  if (productColors.length > 0) {
+    productColors.forEach((cor) => {
       const btn = document.createElement("button");
       btn.textContent = cor;
-      btn.classList.add("opcao-btn");
-      btn.setAttribute("data-color", cor);
-      try {
-        btn.style.color = cor;
-      } catch (e) {}
-      btn.setAttribute("aria-pressed", "false");
+      btn.className = "opcao-btn";
+      btn.dataset.color = cor;
 
-      // procura meta com color igual (case-insensitive)
       const corKey = String(cor).toLowerCase();
-      const matched = modalImagesMeta.findIndex(
+      const matchedIndex = modalImagesMeta.findIndex(
         (m) => m.color && String(m.color).toLowerCase() === corKey
       );
-      if (matched >= 0) {
-        btn.dataset.imgIndex = String(matched);
+      if (matchedIndex >= 0) {
+        btn.dataset.imgIndex = String(matchedIndex);
       }
 
       btn.onclick = () => {
         selectedColor = cor;
-        document.querySelectorAll("#modal-cores .opcao-btn").forEach((b) => {
-          b.classList.remove("ativo");
-          b.setAttribute("aria-pressed", "false");
-        });
+        document
+          .querySelectorAll("#modal-cores .opcao-btn")
+          .forEach((b) => b.classList.remove("ativo"));
         btn.classList.add("ativo");
-        btn.setAttribute("aria-pressed", "true");
-        // se imagem vinculada, atualiza
+
         const idx = parseInt(btn.dataset.imgIndex ?? "-1", 10);
-        if (!isNaN(idx) && idx >= 0 && idx < modalImages.length) {
+        if (idx >= 0) {
           updateModalImage(idx);
-        } else {
-          // fallback: busca substring no src
-          const found = modalImages.findIndex((src) =>
-            String(src).toLowerCase().includes(corKey)
-          );
-          if (found >= 0) updateModalImage(found);
         }
         checkConfirm();
       };
       coresContainer.appendChild(btn);
     });
   } else {
-    coresContainer.innerHTML = "<p>Cor única</p>";
+    coresContainer.innerHTML = "<small>Cor única</small>";
     selectedColor = "Única";
   }
 
@@ -364,44 +315,37 @@ function openProductModal(product) {
     product.tamanhos.forEach((tamanho) => {
       const btn = document.createElement("button");
       btn.textContent = tamanho;
-      btn.classList.add("opcao-btn");
-      btn.setAttribute("aria-pressed", "false");
+      btn.className = "opcao-btn";
       btn.onclick = () => {
         selectedSize = tamanho;
-        document.querySelectorAll("#modal-tamanhos .opcao-btn").forEach((b) => {
-          b.classList.remove("ativo");
-          b.setAttribute("aria-pressed", "false");
-        });
+        document
+          .querySelectorAll("#modal-tamanhos .opcao-btn")
+          .forEach((b) => b.classList.remove("ativo"));
         btn.classList.add("ativo");
-        btn.setAttribute("aria-pressed", "true");
         checkConfirm();
       };
       tamanhosContainer.appendChild(btn);
     });
   } else {
-    tamanhosContainer.innerHTML = "<p>Tamanho Único (M)</p>";
-    selectedSize = "Único (M)";
+    tamanhosContainer.innerHTML = "<small>Tamanho único</small>";
+    selectedSize = "Único";
   }
 
-  // set handlers prev/next (remove listeners anteriores para evitar duplicação)
-  const clonePrev = prevBtn?.cloneNode(true);
-  const cloneNext = nextBtn?.cloneNode(true);
-  if (prevBtn && clonePrev) prevBtn.parentNode.replaceChild(clonePrev, prevBtn);
-  if (nextBtn && cloneNext) nextBtn.parentNode.replaceChild(cloneNext, nextBtn);
+  // Carousel controls
+  const prevBtn = modal.querySelector(".carousel-prev");
+  const nextBtn = modal.querySelector(".carousel-next");
+  const newPrev = prevBtn.cloneNode(true);
+  const newNext = nextBtn.cloneNode(true);
+  prevBtn.parentNode.replaceChild(newPrev, prevBtn);
+  nextBtn.parentNode.replaceChild(newNext, nextBtn);
+  newPrev.addEventListener("click", () =>
+    updateModalImage(selectedImageIndex - 1)
+  );
+  newNext.addEventListener("click", () =>
+    updateModalImage(selectedImageIndex + 1)
+  );
 
-  const newPrev = modal.querySelector(".carousel-prev");
-  const newNext = modal.querySelector(".carousel-next");
-  newPrev?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    updateModalImage(selectedImageIndex - 1);
-  });
-  newNext?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    updateModalImage(selectedImageIndex + 1);
-  });
-
-  // habilita/desabilita confirmar conforme seleção
-  btnConfirmar.disabled = true;
+  checkConfirm();
   modal.classList.remove("hidden");
 }
 
@@ -414,13 +358,11 @@ function checkConfirm() {
   btn.disabled = !(selectedColor && selectedSize);
 }
 
-// Ajuste: botão de fechar do modal de produto tem id="close-produto-modal"
 document
   .getElementById("close-produto-modal")
   ?.addEventListener("click", closeProductModal);
 document.getElementById("confirmar-compra")?.addEventListener("click", () => {
   if (!selectedProduct) return;
-
   const cart = loadCart();
   const id = `${selectedProduct.id}-${selectedColor}-${selectedSize}`;
   const existing = cart.find((p) => p.id === id);
@@ -432,7 +374,7 @@ document.getElementById("confirmar-compra")?.addEventListener("click", () => {
       name: selectedProduct.nome,
       price: selectedProduct.preco,
       qty: 1,
-      thumb: selectedProduct.imagens?.[0] || "",
+      thumb: modalImages.length > 0 ? modalImages[0] : "",
       cor: selectedColor,
       tamanho: selectedSize,
     });
@@ -448,43 +390,33 @@ document.getElementById("confirmar-compra")?.addEventListener("click", () => {
 // ==========================
 // MODAL DO CARRINHO
 // ==========================
-
-// Nota explicativa:
-// O botão flutuante do carrinho possui id="cart-button".
-// Ao clicar, o handler abaixo chama renderCartModal() (que usa renderCartGeneric para popular os itens)
-// e em seguida remove a classe "hidden" do elemento #cart-modal para exibir a modal.
-// Fechamento é tratado por #close-cart-modal e por clique no backdrop (ver listeners abaixo).
-
 document.getElementById("cart-button")?.addEventListener("click", () => {
-  renderCartModal(); // popula #cart-modal-items e total em #cart-modal-total
-  document.getElementById("cart-modal")?.classList.remove("hidden"); // mostra a modal
+  renderCartModal();
+  document.getElementById("cart-modal")?.classList.remove("hidden");
 });
 
-// Fechar modal: botão de fechar (id="close-cart-modal")
 document.getElementById("close-cart-modal")?.addEventListener("click", () => {
   document.getElementById("cart-modal")?.classList.add("hidden");
 });
 
-// Fechar modal clicando fora do conteúdo: o listener verifica se o alvo do clique tem id === "cart-modal"
 document.getElementById("cart-modal")?.addEventListener("click", (e) => {
   if (e.target.id === "cart-modal")
     document.getElementById("cart-modal")?.classList.add("hidden");
 });
 
 // ==========================
-// REMOÇÃO COM CONFIRMAÇÃO
+// REMOÇÃO DE ITENS
 // ==========================
 let pendingRemoveId = null;
 
 function requestRemove(id) {
   pendingRemoveId = id;
-  const cart = loadCart();
-  const item = cart.find((p) => p.id === id);
+  const item = loadCart().find((p) => p.id === id);
   const msgEl = document.getElementById("remove-confirm-message");
   if (msgEl) {
     msgEl.textContent = item
       ? `Deseja remover "${item.name}" do carrinho?`
-      : "Deseja remover este item do carrinho?";
+      : "Deseja remover este item?";
   }
   document.getElementById("remove-confirm-modal")?.classList.remove("hidden");
 }
@@ -525,14 +457,14 @@ function changeQty(id, delta) {
   let item = cart.find((p) => p.id === id);
   if (!item) return;
 
-  if (delta === -1 && item.qty === 1) {
+  if (delta < 0 && item.qty === 1) {
     requestRemove(id);
     return;
   }
-
   item.qty += delta;
-  if (item.qty <= 0) cart = cart.filter((p) => p.id !== id);
-
+  if (item.qty <= 0) {
+    cart = cart.filter((p) => p.id !== id);
+  }
   saveCart(cart);
   updateFloatingCart();
   renderCart();
@@ -545,21 +477,18 @@ function changeQty(id, delta) {
 document.addEventListener("DOMContentLoaded", () => {
   updateFloatingCart();
 
-  // tenta aguardar window.__produtos (carregado por cms.js) por curto período
   (function waitProdutos(attempt = 0) {
     if (window.__produtos && window.__produtos.length > 0) {
-      renderCart(); // renderiza com thumbs corretos
-      return;
-    }
-    if (attempt >= 20) {
-      // timeout: renderiza mesmo assim (usa thumbs salvos no item como fallback)
       renderCart();
       return;
     }
-    setTimeout(() => waitProdutos(attempt + 1), 100); // tenta novamente em 100ms
+    if (attempt >= 20) {
+      renderCart();
+      return;
+    }
+    setTimeout(() => waitProdutos(attempt + 1), 100);
   })();
 
-  // handlers para os botões da modal (caso existam)
   document
     .getElementById("cart-modal-open-cart")
     ?.addEventListener("click", () => {
@@ -568,7 +497,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("cart-modal-buy-now")
     ?.addEventListener("click", () => {
-      // sendWhatsAppOrder é definido em js/checkout.js (agregado na index.html)
       if (typeof sendWhatsAppOrder === "function") {
         sendWhatsAppOrder();
       } else {

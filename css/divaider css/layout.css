@@ -94,8 +94,21 @@
   .hero-media{ order: 2;justify-content: center; align-content: center; display: flex; }
   .cart-layout { grid-template-columns: 1fr; }
   .cart-item-info { text-align: center; }
+.carousel-btn.prev {
+   display: none;
+  }
+  
+  .carousel-btn.next {
+    display: none
+  }
+
 }
+
 @media (max-width: 820px){
+  .hero-grid {
+    padding: 1.5rem 1rem 0;
+    gap: 1rem;
+  }
   .hero-media{justify-content: center; align-content: center; display: flex; order: 2; /* imagem embaixo */
     width: 100%; /* ocupa toda a largura possível */}
   .header-grid{ justify-content: center; padding: 1.75rem; flex-direction: column; }
@@ -200,13 +213,11 @@
   .card-body h3{ font-size: 0.98rem; line-height: 1.15; margin-bottom: 0.25rem; }
   .price{ font-size: 0.95rem; margin-bottom: 0.35rem; }
 
+  /* AJUSTE AQUI: Oculta as setas de imagem dos cards em telas pequenas */
   .card .thumb .card-prev,
   .card .thumb .card-next{
-    width: 46px;
-    height: 46px;
+    display: none;
   }
-  .card .thumb .card-prev { left: 6px; right: auto; }
-  .card .thumb .card-next { right: 6px; left: auto; }
 
   .card-body .btn,
   .card-body .btn-primary {
@@ -216,5 +227,4 @@
     border-radius: 10px;
     box-sizing: border-box;
   }
-
 }

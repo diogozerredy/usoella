@@ -11,47 +11,49 @@ collections:
   - name: "loja"
     label: "Loja"
     files:
-      - file: "data/produtos.json"
-        label: "Produtos"
-        name: "produtos"
-        format: "json"
-        fields:
-          - label: "Produtos"
-            name: "produtos"
-            widget: "list"
-            summary: "{{fields.nome}} — R$ {{fields.preco}} ({{fields.categoria}})"
-            fields:
-              - { label: "ID/Slug", name: "id", widget: "string", pattern: ["^[a-z0-9-]+$", "Use minúsculas e hífens."] }
-              - { label: "Nome", name: "nome", widget: "string" }
-              - { label: "Descrição", name: "descricao", widget: "text" }
-              - { label: "Preço (R$)", name: "preco", widget: "number", value_type: "float", min: 0 }
-              - { label: "Categoria", name: "categoria", widget: "select", options: ["Camisetas","Sapatos","Bolsas","Acessórios","Outros"] }
-              - { label: "Imagem (legacy)", name: "imagem", widget: "image", required: false }
-              - label: "Imagens (opcional, use para cores)"
-                name: "imagens"
-                widget: "list"
-                required: false
-                fields:
-                    - { label: "Imagem", name: "src", widget: "image" }
-                    - { label: "Cor (opcional)", name: "color", widget: "string", ... }
-              - label: "Cores"
-                name: "cores"
-                widget: "list"
-                field: { label: "Cor", name: "cor", widget: "string" }
-              - label: "Tamanhos"
-                name: "tamanhos"
-                widget: "list"
-                field: { label: "Tamanho", name: "tam", widget: "string" }
-              - { label: "Link (opcional)", name: "link", widget: "string", required: false }
-              - { label: "Destaque", name: "destaque", widget: "boolean", default: false }
-              - { label: "Disponível", name: "ativo", widget: "boolean", default: true }
-              - { label: "Criado em", name: "createdAt", widget: "datetime" }
+    - file: "data/produtos.json"
+      label: "Produtos e Banner do Shop"
+      name: "produtos"
+      format: "json"
+      fields:
+        - label: "Banner da Loja (Shop)"
+          name: "hero"
+          widget: "list"
+          summary: "{{fields.alt}}"
+          fields:
+            - { label: "Imagem", name: "src", widget: "image" }
+            - { label: "Texto Alternativo (opcional)", name: "alt", widget: "string", required: false }
+        - label: "Produtos"
+          name: "produtos"
+          widget: "list"
+          summary: "{{fields.nome}} — R$ {{fields.preco}} ({{fields.categoria}})"
+          fields:
+            - { label: "ID/Slug", name: "id", widget: "string", pattern: ["^[a-z0-9-]+$", "Use minúsculas e hífens."] }
+            - { label: "Nome", name: "nome", widget: "string" }
+            - { label: "Descrição", name: "descricao", widget: "text" }
+            - { label: "Preço (R$)", name: "preco", widget: "number", value_type: "float", min: 0 }
+            - { label: "Categoria", name: "categoria", widget: "select", options: ["Camisetas","Sapatos","Bolsas","Acessórios","Outros"] }
+            - label: "Imagens (cada imagem com sua cor)"
+              name: "imagens"
+              widget: "list"
+              fields:
+                - { label: "Imagem", name: "src", widget: "image" }
+                - { label: "Cor", name: "color", widget: "string", hint: "Nome da cor (rosa, branco...)" }
+            - label: "Tamanhos"
+              name: "tamanhos"
+              widget: "list"
+              field: { label: "Tamanho", name: "tam", widget: "string" }
+            - { label: "Link (opcional)", name: "link", widget: "string", required: false }
+            - { label: "Destaque", name: "destaque", widget: "boolean", default: false }
+            - { label: "Disponível", name: "ativo", widget: "boolean", default: true }
+            - { label: "Criado em", name: "createdAt", widget: "datetime" }
 
-      - file: "data/releases.json"
-        label: "Releases (Resumo de mudanças)"
-        name: "releases"
-        format: "json"
-        fields:
+
+    - file: "data/releases.json"
+      label: "Releases (Resumo de mudanças)"
+      name: "releases"
+      format: "json"
+      fields:
           - label: "Publicações"
             name: "releases"
             widget: "list"
@@ -78,4 +80,3 @@ collections:
         - { name: "imagem", label: "Imagem", widget: "image" } 
         - { name: "cta", label: "Texto do botão", widget: "string" }
         - { name: "cta_link", label: "Link do botão", widget: "string" }
-

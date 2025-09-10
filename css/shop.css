@@ -104,7 +104,7 @@ body.shop {
   .hero-nav { width: 44px; height: 44px; }
 }
 @media (max-width: 768px) {
-  .hero-slide { height: clamp(220px, 38vh, 360px); }
+  .hero-slide { height: clamp(200px, 35vh, 320px); } /* Altura reduzida para melhor visualização em celulares */
   .hero-prev, .hero-next { width: 36px; height: 36px; }
 }
 
