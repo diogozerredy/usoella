@@ -1,11 +1,5 @@
 {
-  "hero": [
-    {
-      "src_desktop": "static/images/uploads/vestido-red.jpg",
-      "src_mobile": "static/images/uploads/img2.webp",
-      "alt": "Modelo com vestido elegante"
-    }
-  ],
+  "hero": [],
   "produtos": [
     {
       "id": "vestido-rose",
