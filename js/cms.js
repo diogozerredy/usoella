@@ -59,13 +59,11 @@ function buildFilters(categories) {
 
 function productCardHTML(p) {
   const price = Number(p.preco || 0);
-  // CORREÇÃO: Pega a primeira imagem da primeira cor como thumbnail
   const thumb =
-    (Array.isArray(p.imagens_por_cor) &&
-      p.imagens_por_cor.length > 0 &&
-      Array.isArray(p.imagens_por_cor[0].imagens_cor) &&
-      p.imagens_por_cor[0].imagens_cor.length > 0 &&
-      p.imagens_por_cor[0].imagens_cor[0].src) ||
+    (Array.isArray(p.imagens) &&
+      p.imagens.length > 0 &&
+      (p.imagens[0].src || p.imagens[0])) ||
+    p.imagem ||
     "https://via.placeholder.com/600x600?text=Produto";
   return `
     <article class="card" data-prod-id="${p.id}">
@@ -120,14 +118,16 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
         console.warn("Produto não encontrado para id", id);
         return;
       }
-      // CORREÇÃO: Passa a nova estrutura de imagens para o modal
+      // CORREÇÃO APLICADA AQUI: Adicionando a descrição ao objeto do modal
       const productForModal = {
         id: prod.id,
         nome: prod.nome,
-        descricao: prod.descricao,
+        descricao: prod.descricao, // <-- LINHA CORRIGIDA
         preco: Number(prod.preco || 0),
-        imagens_por_cor: Array.isArray(prod.imagens_por_cor)
-          ? prod.imagens_por_cor
+        imagens: Array.isArray(prod.imagens)
+          ? prod.imagens
+          : prod.imagem
+          ? [prod.imagem]
           : [],
         tamanhos: prod.tamanhos || [],
       };
@@ -147,10 +147,16 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
     );
     if (!prod) return;
 
-    // CORREÇÃO: Extrai todas as imagens de todas as cores para o carrossel do card
-    const imgs = (prod.imagens_por_cor || [])
-      .flatMap((cor) => cor.imagens_cor.map((img) => img.src))
-      .filter(Boolean);
+    const imgsMeta = Array.isArray(prod.imagens)
+      ? prod.imagens.map((it) =>
+          typeof it === "string"
+            ? { src: it }
+            : { src: it.src || it.url || "", color: it.color || it.colorName }
+        )
+      : prod.imagem
+      ? [{ src: prod.imagem }]
+      : [];
+    const imgs = imgsMeta.map((m) => m.src).filter(Boolean);
 
     const prevBtn = cardEl.querySelector(".card-prev");
     const nextBtn = cardEl.querySelector(".card-next");
