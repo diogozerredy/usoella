@@ -131,39 +131,29 @@ function getThumbForItem(item) {
     return item.thumb || "https://via.placeholder.com/120";
   }
 
-  const imgsMeta = Array.isArray(prod.imagens)
-    ? prod.imagens.map((it) =>
-        typeof it === "string"
-          ? { src: it }
-          : { src: it.src || it.url || "", color: it.color || it.colorName }
-      )
-    : prod.imagem
-    ? [{ src: prod.imagem }]
-    : [];
-
-  if (item.cor) {
-    const corKey = String(item.cor).toLowerCase();
-    const matched = imgsMeta.find(
-      (m) => m.color && String(m.color).toLowerCase() === corKey
-    );
-    if (matched && matched.src) return matched.src;
-    const found = imgsMeta.find(
-      (m) => m.src && String(m.src).toLowerCase().includes(corKey)
-    );
-    if (found && found.src) return found.src;
-  }
-
-  if (imgsMeta.length && imgsMeta[0].src) return imgsMeta[0].src;
-
-  if (Array.isArray(prod.imagens) && prod.imagens.length) {
-    const first = prod.imagens[0];
-    if (typeof first === "string") return first;
-    if (first && typeof first === "object" && (first.src || first.url)) {
-      return first.src || first.url;
+  // CORREÇÃO: Lógica para encontrar a imagem com base na nova estrutura
+  if (item.cor && Array.isArray(prod.imagens_por_cor)) {
+    const corGroup = prod.imagens_por_cor.find((g) => g.cor === item.cor);
+    if (
+      corGroup &&
+      Array.isArray(corGroup.imagens_cor) &&
+      corGroup.imagens_cor.length > 0
+    ) {
+      return corGroup.imagens_cor[0].src;
     }
   }
 
-  return prod.imagem || item.thumb || "https://via.placeholder.com/120";
+  // Fallback para a primeira imagem do produto se a cor não for encontrada
+  if (
+    Array.isArray(prod.imagens_por_cor) &&
+    prod.imagens_por_cor.length > 0 &&
+    Array.isArray(prod.imagens_por_cor[0].imagens_cor) &&
+    prod.imagens_por_cor[0].imagens_cor.length > 0
+  ) {
+    return prod.imagens_por_cor[0].imagens_cor[0].src;
+  }
+
+  return item.thumb || "https://via.placeholder.com/120";
 }
 
 // ==========================
@@ -276,8 +266,7 @@ let selectedProduct = null;
 let selectedColor = null;
 let selectedSize = null;
 let selectedImageIndex = 0;
-let modalImages = [];
-let modalImagesMeta = [];
+let modalImages = []; // Array de URLs das imagens da cor selecionada
 
 function updateModalImage(index) {
   const img = document.getElementById("modal-produto-img");
@@ -294,31 +283,11 @@ function openProductModal(product) {
   selectedSize = null;
   selectedImageIndex = 0;
   modalImages = [];
-  modalImagesMeta = [];
-
-  if (Array.isArray(product.imagens)) {
-    product.imagens.forEach((it) => {
-      if (typeof it === "string") {
-        modalImagesMeta.push({ src: it });
-        modalImages.push(it);
-      } else if (it && typeof it === "object") {
-        const src = it.src || it.url || "";
-        const color = it.color || it.colorName || null;
-        if (src) {
-          modalImagesMeta.push({ src, color });
-          modalImages.push(src);
-        }
-      }
-    });
-  } else if (product.imagem) {
-    modalImagesMeta.push({ src: product.imagem });
-    modalImages.push(product.imagem);
-  }
 
   const modal = document.getElementById("produto-modal");
   const nome = document.getElementById("modal-produto-nome");
   const preco = document.getElementById("modal-produto-preco");
-  const descricao = document.getElementById("modal-produto-descricao"); // Pega o elemento da descrição
+  const descricao = document.getElementById("modal-produto-descricao");
   const img = document.getElementById("modal-produto-img");
   const coresContainer = document.getElementById("modal-cores");
   const tamanhosContainer = document.getElementById("modal-tamanhos");
@@ -326,41 +295,33 @@ function openProductModal(product) {
 
   nome.textContent = product.nome;
   preco.textContent = `R$ ${product.preco.toFixed(2)}`;
-  descricao.textContent = product.descricao || ""; // Adiciona a descrição
-  img.src = modalImages[0] || "https://via.placeholder.com/200";
+  descricao.textContent = product.descricao || "";
+
+  // CORREÇÃO: Pega a primeira imagem da primeira cor como imagem inicial
+  img.src =
+    (product.imagens_por_cor &&
+      product.imagens_por_cor[0] &&
+      product.imagens_por_cor[0].imagens_cor[0] &&
+      product.imagens_por_cor[0].imagens_cor[0].src) ||
+    "https://via.placeholder.com/200";
 
   // Render cores
   coresContainer.innerHTML = "";
-  const productColors = modalImagesMeta
-    .map((imgMeta) => imgMeta.color)
-    .filter((color, index, self) => color && self.indexOf(color) === index);
-
-  if (productColors.length > 0) {
-    productColors.forEach((cor) => {
+  if (product.imagens_por_cor && product.imagens_por_cor.length > 0) {
+    product.imagens_por_cor.forEach((corGroup) => {
       const btn = document.createElement("button");
-      btn.textContent = cor;
+      btn.textContent = corGroup.cor;
       btn.className = "opcao-btn";
-      btn.dataset.color = cor;
-
-      const corKey = String(cor).toLowerCase();
-      const matchedIndex = modalImagesMeta.findIndex(
-        (m) => m.color && String(m.color).toLowerCase() === corKey
-      );
-      if (matchedIndex >= 0) {
-        btn.dataset.imgIndex = String(matchedIndex);
-      }
-
+      btn.dataset.color = corGroup.cor;
       btn.onclick = () => {
-        selectedColor = cor;
+        selectedColor = corGroup.cor;
+        modalImages = corGroup.imagens_cor.map((img) => img.src);
+        selectedImageIndex = 0;
+        updateModalImage(0);
         document
           .querySelectorAll("#modal-cores .opcao-btn")
           .forEach((b) => b.classList.remove("ativo"));
         btn.classList.add("ativo");
-
-        const idx = parseInt(btn.dataset.imgIndex ?? "-1", 10);
-        if (idx >= 0) {
-          updateModalImage(idx);
-        }
         checkConfirm();
       };
       coresContainer.appendChild(btn);

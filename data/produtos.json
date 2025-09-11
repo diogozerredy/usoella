@@ -1,4 +1,85 @@
 {
-  "hero": [],
-  "produtos": []
+  "hero": [
+    {
+      "src_desktop": "static/images/uploads/vestido-red.jpg",
+      "src_mobile": "static/images/uploads/img2.webp",
+      "alt": "Modelo com vestido elegante"
+    }
+  ],
+  "produtos": [
+    {
+      "id": "vestido-rose",
+      "nome": "Vestido Rosê Delicado",
+      "descricao": "Vestido rosê delicado, ótimo para eventos.",
+      "preco": 129.9,
+      "categoria": "Camisetas",
+      "imagens": [
+        { "src": "static/images/uploads/vestido-rosa.jpeg", "color": "rosa" },
+        { "src": "static/images/uploads/vestido-red.jpg", "color": "vermelho" },
+        { "src": "static/images/uploads/vestido-verde.jpg", "color": "verde" }
+      ],
+      "tamanhos": ["p", "m", "g"],
+      "destaque": true,
+      "ativo": true,
+      "createdAt": "2025-08-30T10:00:00.000Z"
+    },
+    {
+      "id": "vestido-rose-2",
+      "nome": "Vestido Rosê Delicado",
+      "descricao": "Vestido rosê delicado, ótimo para eventos.",
+      "preco": 129.9,
+      "categoria": "Camisetas",
+      "imagens": [
+        { "src": "static/images/uploads/vestido-rosa.jpeg", "color": "rosa" },
+        { "src": "static/images/uploads/vestido-red.jpg", "color": "vermelho" },
+        { "src": "static/images/uploads/vestido-verde.jpg", "color": "verde" }
+      ],
+      "tamanhos": ["p", "m", "g"],
+      "destaque": true,
+      "ativo": true,
+      "createdAt": "2025-08-30T10:00:00.000Z"
+    },
+    {
+      "id": "vestido-rose-3",
+      "nome": "Vestido Rosê Delicado",
+      "descricao": "Vestido rosê delicado, ótimo para eventos.",
+      "preco": 129.9,
+      "categoria": "Camisetas",
+      "imagens": [
+        { "src": "static/images/uploads/vestido-verde.jpg", "color": "verde" }
+      ],
+      "tamanhos": ["p", "m", "g"],
+      "destaque": true,
+      "ativo": true,
+      "createdAt": "2025-08-30T10:00:00.000Z"
+    },
+    {
+      "id": "vestido-rose-4",
+      "nome": "Vestido Rosê Delicado",
+      "descricao": "Vestido rosê delicado, ótimo para eventos.",
+      "preco": 129.9,
+      "categoria": "Camisetas",
+      "imagens": [
+        { "src": "static/images/uploads/vestido-red.jpg", "color": "vermelho" }
+      ],
+      "tamanhos": ["p", "m", "g"],
+      "destaque": true,
+      "ativo": true,
+      "createdAt": "2025-08-30T10:00:00.000Z"
+    },
+    {
+      "id": "vestido-rose-5",
+      "nome": "Vestido Rosê Delicado",
+      "descricao": "Vestido rosê delicado, ótimo para eventos.",
+      "preco": 129.9,
+      "categoria": "Camisetas",
+      "imagens": [
+        { "src": "static/images/uploads/vestido-red.jpg", "color": "vermelho" },
+        { "src": "static/images/uploads/vestido-verde.jpg", "color": "verde" }
+      ],
+      "destaque": true,
+      "ativo": true,
+      "createdAt": "2025-08-30T10:00:00.000Z"
+    }
+  ]
 }
