@@ -45,7 +45,7 @@ function showNotification(message, success = true, requireAction = false) {
     clearTimeout(notificationTimeout);
     notificationTimeout = setTimeout(() => {
       notificationModal.classList.add("hidden");
-    }, 2000); // Fecha o modal após 2 segundos
+    }, 1300); // Fecha o modal após 2 segundos
   }
 
   notificationModal.classList.remove("hidden");
