@@ -1,3 +1,64 @@
+let notificationTimeout;
+
+// ==========================
+// NOTIFICAÇÃO (MODAL HÍBRIDO)
+// ==========================
+function showNotification(message, success = true, requireAction = false) {
+  const notificationModal = document.getElementById("notification-alert-modal");
+  const notificationMessage = document.getElementById(
+    "notification-alert-message"
+  );
+  const notificationIcon = document.getElementById("notification-alert-icon");
+  const okButton = document.getElementById("notification-alert-ok-btn");
+
+  if (
+    !notificationModal ||
+    !notificationMessage ||
+    !notificationIcon ||
+    !okButton
+  ) {
+    console.error("Elementos do modal de notificação não encontrados.");
+    return;
+  }
+
+  notificationMessage.textContent = message;
+
+  // Define o ícone
+  notificationIcon.className = "";
+  if (success) {
+    notificationIcon.classList.add("fas", "fa-check-circle", "success-icon");
+  } else {
+    notificationIcon.classList.add(
+      "fas",
+      "fa-exclamation-triangle",
+      "error-icon"
+    );
+  }
+
+  // Decide se mostra o botão ou usa o temporizador
+  if (requireAction) {
+    okButton.style.display = "block"; // Mostra o botão OK
+  } else {
+    okButton.style.display = "none"; // Esconde o botão OK
+
+    // Limpa qualquer temporizador anterior e cria um novo
+    clearTimeout(notificationTimeout);
+    notificationTimeout = setTimeout(() => {
+      notificationModal.classList.add("hidden");
+    }, 2000); // Fecha o modal após 2 segundos
+  }
+
+  notificationModal.classList.remove("hidden");
+}
+
+// Evento para fechar o modal de notificação via botão OK
+document
+  .getElementById("notification-alert-ok-btn")
+  ?.addEventListener("click", () => {
+    document
+      .getElementById("notification-alert-modal")
+      ?.classList.add("hidden");
+  });
 // ==========================
 // MENU MOBILE
 // ==========================

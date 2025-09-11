@@ -77,7 +77,6 @@
         { "src": "static/images/uploads/vestido-red.jpg", "color": "vermelho" },
         { "src": "static/images/uploads/vestido-verde.jpg", "color": "verde" }
       ],
-      "tamanhos": ["p", "m", "g"],
       "destaque": true,
       "ativo": true,
       "createdAt": "2025-08-30T10:00:00.000Z"

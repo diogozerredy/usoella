@@ -174,13 +174,21 @@
       <div class="cart-modal-content">
         <h3>Remover item</h3>
         <p id="remove-confirm-message">Deseja remover este item do carrinho?</p>
-        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+        <div style="display:flex; gap:0.5rem; margin-top:1rem; justify-content: center;">
           <button id="remove-confirm-btn" class="btn btn-primary">Remover</button>
           <button id="cancel-remove-btn" class="btn btn-outline">Cancelar</button>
         </div>
       </div>
     </div>
-
+    <div id="notification-alert-modal" class="cart-modal hidden">
+        <div class="cart-modal-content notification-alert-content">
+            <div class="notification-alert-body">
+                <i id="notification-alert-icon" class="fas"></i>
+                <p id="notification-alert-message"></p>
+                <button id="notification-alert-ok-btn" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
     <script src="/js/checkout.js"></script>
     <script src="/js/script.js"></script>
     <script src="/js/cms.js"></script>
