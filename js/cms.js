@@ -8,14 +8,25 @@ async function fetchProdutosJSON() {
     if (!res.ok) throw new Error("Falha ao carregar produtos.json");
     const data = await res.json();
     if (data && Array.isArray(data.hero)) {
-      // Ajuste para aceitar src_desktop e src_mobile
+      // **INÍCIO DA CORREÇÃO DO BANNER**
       window.__shopHeroImages = data.hero.map((it) => {
-        const src = window.innerWidth <= 768 ? it.src_mobile : it.src_desktop;
+        // Garante que o caminho da imagem seja extraído corretamente, seja string ou objeto
+        const desktopSrc =
+          typeof it.src_desktop === "string"
+            ? it.src_desktop
+            : it.src_desktop?.src;
+        const mobileSrc =
+          typeof it.src_mobile === "string"
+            ? it.src_mobile
+            : it.src_mobile?.src;
+
+        const src = window.innerWidth <= 768 ? mobileSrc : desktopSrc;
         return {
-          src: src || it.src_desktop || it.src_mobile || "",
+          src: src || desktopSrc || mobileSrc || "",
           alt: it.alt || "",
         };
       });
+      // **FIM DA CORREÇÃO DO BANNER**
     } else {
       window.__shopHeroImages = window.__shopHeroImages || [];
     }
@@ -57,14 +68,24 @@ function buildFilters(categories) {
   });
 }
 
+function getProductThumbnail(p) {
+  if (p.imagens_por_cor && p.imagens_por_cor.length > 0) {
+    const firstColorGroup = p.imagens_por_cor[0];
+    if (firstColorGroup.imagens_cor && firstColorGroup.imagens_cor.length > 0) {
+      const firstImage = firstColorGroup.imagens_cor[0];
+      return typeof firstImage === "string" ? firstImage : firstImage.src;
+    }
+  }
+  if (p.imagens && p.imagens.length > 0) {
+    const firstImage = p.imagens[0];
+    return typeof firstImage === "string" ? firstImage : firstImage.src;
+  }
+  return "https://via.placeholder.com/600x600?text=Produto";
+}
+
 function productCardHTML(p) {
   const price = Number(p.preco || 0);
-  const thumb =
-    (Array.isArray(p.imagens) &&
-      p.imagens.length > 0 &&
-      (p.imagens[0].src || p.imagens[0])) ||
-    p.imagem ||
-    "https://via.placeholder.com/600x600?text=Produto";
+  const thumb = getProductThumbnail(p);
   return `
     <article class="card" data-prod-id="${p.id}">
       <div class="thumb">
@@ -107,7 +128,6 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
     if (emptyEl) emptyEl.style.display = "none";
   }
 
-  // Bind "Abrir modal do produto"
   listEl.querySelectorAll("button.btn-open-product").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const id = btn.dataset.id;
@@ -118,16 +138,14 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
         console.warn("Produto não encontrado para id", id);
         return;
       }
-      // CORREÇÃO APLICADA AQUI: Adicionando a descrição ao objeto do modal
+
       const productForModal = {
         id: prod.id,
         nome: prod.nome,
-        descricao: prod.descricao, // <-- LINHA CORRIGIDA
+        descricao: prod.descricao,
         preco: Number(prod.preco || 0),
-        imagens: Array.isArray(prod.imagens)
-          ? prod.imagens
-          : prod.imagem
-          ? [prod.imagem]
+        imagens_por_cor: Array.isArray(prod.imagens_por_cor)
+          ? prod.imagens_por_cor
           : [],
         tamanhos: prod.tamanhos || [],
       };
@@ -139,7 +157,6 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
     });
   });
 
-  // Bind card thumbnail carousel controls
   listEl.querySelectorAll(".card").forEach((cardEl) => {
     const prodId = cardEl.dataset.prodId;
     const prod = (window.__produtos || []).find(
@@ -147,16 +164,11 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
     );
     if (!prod) return;
 
-    const imgsMeta = Array.isArray(prod.imagens)
-      ? prod.imagens.map((it) =>
-          typeof it === "string"
-            ? { src: it }
-            : { src: it.src || it.url || "", color: it.color || it.colorName }
-        )
-      : prod.imagem
-      ? [{ src: prod.imagem }]
-      : [];
-    const imgs = imgsMeta.map((m) => m.src).filter(Boolean);
+    const imgs = (prod.imagens_por_cor || [])
+      .flatMap((cor) =>
+        cor.imagens_cor.map((img) => (typeof img === "string" ? img : img.src))
+      )
+      .filter(Boolean);
 
     const prevBtn = cardEl.querySelector(".card-prev");
     const nextBtn = cardEl.querySelector(".card-next");

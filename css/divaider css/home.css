@@ -188,7 +188,7 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-soft);
   padding: 0 .3rem;
-  width: 15em;
+  width: 12em;
   height: auto;
 }
 .espaco{ height: 1px; }

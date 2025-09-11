@@ -45,7 +45,7 @@ function showNotification(message, success = true, requireAction = false) {
     clearTimeout(notificationTimeout);
     notificationTimeout = setTimeout(() => {
       notificationModal.classList.add("hidden");
-    }, 1300); // Fecha o modal após 2 segundos
+    }, 1000); // Fecha o modal após 2 segundos
   }
 
   notificationModal.classList.remove("hidden");
@@ -131,39 +131,31 @@ function getThumbForItem(item) {
     return item.thumb || "https://via.placeholder.com/120";
   }
 
-  const imgsMeta = Array.isArray(prod.imagens)
-    ? prod.imagens.map((it) =>
-        typeof it === "string"
-          ? { src: it }
-          : { src: it.src || it.url || "", color: it.color || it.colorName }
-      )
-    : prod.imagem
-    ? [{ src: prod.imagem }]
-    : [];
-
-  if (item.cor) {
-    const corKey = String(item.cor).toLowerCase();
-    const matched = imgsMeta.find(
-      (m) => m.color && String(m.color).toLowerCase() === corKey
-    );
-    if (matched && matched.src) return matched.src;
-    const found = imgsMeta.find(
-      (m) => m.src && String(m.src).toLowerCase().includes(corKey)
-    );
-    if (found && found.src) return found.src;
-  }
-
-  if (imgsMeta.length && imgsMeta[0].src) return imgsMeta[0].src;
-
-  if (Array.isArray(prod.imagens) && prod.imagens.length) {
-    const first = prod.imagens[0];
-    if (typeof first === "string") return first;
-    if (first && typeof first === "object" && (first.src || first.url)) {
-      return first.src || first.url;
+  // Lógica para encontrar a imagem com base na nova estrutura
+  if (item.cor && Array.isArray(prod.imagens_por_cor)) {
+    const corGroup = prod.imagens_por_cor.find((g) => g.cor === item.cor);
+    if (
+      corGroup &&
+      Array.isArray(corGroup.imagens_cor) &&
+      corGroup.imagens_cor.length > 0
+    ) {
+      const imgSrc = corGroup.imagens_cor[0];
+      return typeof imgSrc === "string" ? imgSrc : imgSrc.src;
     }
   }
 
-  return prod.imagem || item.thumb || "https://via.placeholder.com/120";
+  // Fallback para a primeira imagem do produto se a cor não for encontrada
+  if (
+    Array.isArray(prod.imagens_por_cor) &&
+    prod.imagens_por_cor.length > 0 &&
+    Array.isArray(prod.imagens_por_cor[0].imagens_cor) &&
+    prod.imagens_por_cor[0].imagens_cor.length > 0
+  ) {
+    const imgSrc = prod.imagens_por_cor[0].imagens_cor[0];
+    return typeof imgSrc === "string" ? imgSrc : imgSrc.src;
+  }
+
+  return item.thumb || "https://via.placeholder.com/120";
 }
 
 // ==========================
@@ -276,16 +268,28 @@ let selectedProduct = null;
 let selectedColor = null;
 let selectedSize = null;
 let selectedImageIndex = 0;
+// MODIFICAÇÃO: 'modalImages' agora guarda objetos com src e cor
 let modalImages = [];
-let modalImagesMeta = [];
 
 function updateModalImage(index) {
   const img = document.getElementById("modal-produto-img");
   if (!img || !modalImages || modalImages.length === 0) return;
+
+  // Garante que o índice esteja dentro dos limites
   if (index < 0) index = modalImages.length - 1;
   if (index >= modalImages.length) index = 0;
   selectedImageIndex = index;
-  img.src = modalImages[selectedImageIndex] || "";
+
+  const currentImageInfo = modalImages[selectedImageIndex];
+  img.src = currentImageInfo.src || "";
+
+  // MODIFICAÇÃO: Atualiza a cor selecionada com base na imagem
+  selectedColor = currentImageInfo.cor;
+  document.querySelectorAll("#modal-cores .opcao-btn").forEach((b) => {
+    b.classList.toggle("ativo", b.dataset.color === selectedColor);
+  });
+
+  checkConfirm();
 }
 
 function openProductModal(product) {
@@ -294,83 +298,67 @@ function openProductModal(product) {
   selectedSize = null;
   selectedImageIndex = 0;
   modalImages = [];
-  modalImagesMeta = [];
-
-  if (Array.isArray(product.imagens)) {
-    product.imagens.forEach((it) => {
-      if (typeof it === "string") {
-        modalImagesMeta.push({ src: it });
-        modalImages.push(it);
-      } else if (it && typeof it === "object") {
-        const src = it.src || it.url || "";
-        const color = it.color || it.colorName || null;
-        if (src) {
-          modalImagesMeta.push({ src, color });
-          modalImages.push(src);
-        }
-      }
-    });
-  } else if (product.imagem) {
-    modalImagesMeta.push({ src: product.imagem });
-    modalImages.push(product.imagem);
-  }
 
   const modal = document.getElementById("produto-modal");
   const nome = document.getElementById("modal-produto-nome");
   const preco = document.getElementById("modal-produto-preco");
-  const descricao = document.getElementById("modal-produto-descricao"); // Pega o elemento da descrição
+  const descricao = document.getElementById("modal-produto-descricao");
   const img = document.getElementById("modal-produto-img");
   const coresContainer = document.getElementById("modal-cores");
   const tamanhosContainer = document.getElementById("modal-tamanhos");
-  const btnConfirmar = document.getElementById("confirmar-compra");
 
   nome.textContent = product.nome;
   preco.textContent = `R$ ${product.preco.toFixed(2)}`;
-  descricao.textContent = product.descricao || ""; // Adiciona a descrição
-  img.src = modalImages[0] || "https://via.placeholder.com/200";
+  descricao.textContent = product.descricao || "";
 
-  // Render cores
+  // MODIFICAÇÃO: Constrói uma lista única de imagens com suas cores associadas
+  (product.imagens_por_cor || []).forEach((group) => {
+    (group.imagens_cor || []).forEach((imageSrc) => {
+      modalImages.push({
+        src: typeof imageSrc === "string" ? imageSrc : imageSrc.src,
+        cor: group.cor,
+      });
+    });
+  });
+
+  // Renderiza a primeira imagem e define a primeira cor como ativa
+  if (modalImages.length > 0) {
+    img.src = modalImages[0].src;
+    selectedColor = modalImages[0].cor;
+  } else {
+    img.src = "https://via.placeholder.com/200";
+  }
+
+  // Renderiza os botões de cores
   coresContainer.innerHTML = "";
-  const productColors = modalImagesMeta
-    .map((imgMeta) => imgMeta.color)
-    .filter((color, index, self) => color && self.indexOf(color) === index);
+  const productColors = product.imagens_por_cor || [];
 
   if (productColors.length > 0) {
-    productColors.forEach((cor) => {
+    productColors.forEach((corGroup) => {
       const btn = document.createElement("button");
-      btn.textContent = cor;
+      btn.textContent = corGroup.cor;
       btn.className = "opcao-btn";
-      btn.dataset.color = cor;
+      btn.dataset.color = corGroup.cor;
 
-      const corKey = String(cor).toLowerCase();
-      const matchedIndex = modalImagesMeta.findIndex(
-        (m) => m.color && String(m.color).toLowerCase() === corKey
-      );
-      if (matchedIndex >= 0) {
-        btn.dataset.imgIndex = String(matchedIndex);
-      }
-
+      // MODIFICAÇÃO: Ao clicar na cor, pula para a primeira imagem daquela cor
       btn.onclick = () => {
-        selectedColor = cor;
-        document
-          .querySelectorAll("#modal-cores .opcao-btn")
-          .forEach((b) => b.classList.remove("ativo"));
-        btn.classList.add("ativo");
-
-        const idx = parseInt(btn.dataset.imgIndex ?? "-1", 10);
-        if (idx >= 0) {
-          updateModalImage(idx);
+        const firstImageIndexOfColor = modalImages.findIndex(
+          (img) => img.cor === corGroup.cor
+        );
+        if (firstImageIndexOfColor !== -1) {
+          updateModalImage(firstImageIndexOfColor);
         }
-        checkConfirm();
       };
       coresContainer.appendChild(btn);
     });
+    // Ativa o botão da primeira cor
+    updateModalImage(0);
   } else {
     coresContainer.innerHTML = "<small>Cor única</small>";
     selectedColor = "Única";
   }
 
-  // Render tamanhos
+  // Renderiza tamanhos (sem alteração)
   tamanhosContainer.innerHTML = "";
   if (product.tamanhos?.length > 0) {
     product.tamanhos.forEach((tamanho) => {
@@ -392,7 +380,7 @@ function openProductModal(product) {
     selectedSize = "Único";
   }
 
-  // Carousel controls
+  // Controles do carrossel (agora funcionam desde o início)
   const prevBtn = modal.querySelector(".carousel-prev");
   const nextBtn = modal.querySelector(".carousel-next");
   const newPrev = prevBtn.cloneNode(true);
@@ -434,6 +422,10 @@ document.getElementById("confirmar-compra")?.addEventListener("click", () => {
   const cart = loadCart();
   const id = `${selectedProduct.id}-${selectedColor}-${selectedSize}`;
   const existing = cart.find((p) => p.id === id);
+  const currentThumb =
+    modalImages.find((img) => img.cor === selectedColor)?.src ||
+    (modalImages.length > 0 ? modalImages[0].src : "");
+
   if (existing) {
     existing.qty += 1;
   } else {
@@ -442,7 +434,7 @@ document.getElementById("confirmar-compra")?.addEventListener("click", () => {
       name: selectedProduct.nome,
       price: selectedProduct.preco,
       qty: 1,
-      thumb: modalImages.length > 0 ? modalImages[0] : "",
+      thumb: currentThumb,
       cor: selectedColor,
       tamanho: selectedSize,
     });

@@ -8,6 +8,25 @@ public_folder: "/static/images/uploads"
 publish_mode: editorial_workflow
 
 collections:
+  - name: "pagina_inicial"
+    label: "Página Inicial"
+    files:
+      - file: "data/hero.json"
+        label: "Seção Hero (Topo)"
+        name: "hero"
+        fields:
+          - { name: "titulo", label: "Título", widget: "string" }
+          - { name: "imagem", label: "Imagem", widget: "image" } 
+          - { name: "cta", label: "Texto do botão", widget: "string" }
+          - { name: "cta_link", label: "Link do botão", widget: "string" }
+      - file: "data/sobre.json"
+        label: "Seção Sobre"
+        name: "sobre"
+        fields:
+          - { name: "titulo", label: "Título", widget: "string" }
+          - { name: "imagem", label: "Imagem 800x1000", widget: "image" }
+          - { name: "texto", label: "Texto da Seção", widget: "markdown" }
+
   - name: "loja"
     label: "Loja"
     files:
@@ -48,36 +67,3 @@ collections:
             - { label: "Destaque", name: "destaque", widget: "boolean", default: false }
             - { label: "Disponível", name: "ativo", widget: "boolean", default: true }
             - { label: "Criado em", name: "createdAt", widget: "datetime" }
-
-
-    - file: "data/releases.json"
-      label: "Releases (Resumo de mudanças)"
-      name: "releases"
-      format: "json"
-      fields:
-          - label: "Publicações"
-            name: "releases"
-            widget: "list"
-            summary: "{{fields.titulo}} — {{fields.data}}"
-            fields:
-              - { label: "Título", name: "titulo", widget: "string" }
-              - { label: "Resumo", name: "resumo", widget: "text" }
-              - { label: "Data", name: "data", widget: "datetime" }
-              - label: "Produtos afetados (IDs)"
-                name: "produtos"
-                widget: "list"
-                field: { label: "ID do produto", name: "id", widget: "string" }
-    
-  - name: "hero"
-    label: "Hero"
-    media_folder: "../../static/images"   
-    public_folder: "/static/images"
-    files:
-    - file: "data/hero.json"
-      label: "Seção Hero"
-      name: "hero"
-      fields:
-        - { name: "titulo", label: "Título", widget: "string" }
-        - { name: "imagem", label: "Imagem (800x1000px)", widget: "image" } 
-        - { name: "cta", label: "Texto do botão", widget: "string" }
-        - { name: "cta_link", label: "Link do botão", widget: "string" }
