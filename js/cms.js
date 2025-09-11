@@ -8,11 +8,14 @@ async function fetchProdutosJSON() {
     if (!res.ok) throw new Error("Falha ao carregar produtos.json");
     const data = await res.json();
     if (data && Array.isArray(data.hero)) {
-      window.__shopHeroImages = data.hero.map((it) =>
-        typeof it === "string"
-          ? { src: it, alt: "" }
-          : { src: it.src || "", alt: it.alt || "" }
-      );
+      // Ajuste para aceitar src_desktop e src_mobile
+      window.__shopHeroImages = data.hero.map((it) => {
+        const src = window.innerWidth <= 768 ? it.src_mobile : it.src_desktop;
+        return {
+          src: src || it.src_desktop || it.src_mobile || "",
+          alt: it.alt || "",
+        };
+      });
     } else {
       window.__shopHeroImages = window.__shopHeroImages || [];
     }

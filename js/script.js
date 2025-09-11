@@ -35,59 +35,6 @@ document.getElementById("cta-comprar")?.addEventListener("click", (e) => {
 });
 
 // ==========================
-// FUNÇÃO DE NOTIFICAÇÃO
-// ==========================
-function showNotification(message, isSuccess = true) {
-  const overlay = document.createElement("div");
-  overlay.className = "notification-overlay";
-
-  const content = document.createElement("div");
-  content.className = "notification-content";
-
-  const icon = document.createElement("div");
-  icon.className = isSuccess
-    ? "notification-icon success"
-    : "notification-icon error";
-  icon.innerHTML = isSuccess ? "&#10004;" : "&#9888;";
-
-  const title = document.createElement("h3");
-  title.textContent = isSuccess ? "Sucesso!" : "Atenção!";
-
-  const text = document.createElement("p");
-  text.textContent = message;
-
-  const closeButton = document.createElement("button");
-  closeButton.className = "notification-close-btn";
-  closeButton.textContent = "OK";
-
-  const closeNotification = () => {
-    if (document.body.contains(overlay)) {
-      overlay.classList.remove("show");
-      setTimeout(() => {
-        if (document.body.contains(overlay)) {
-          document.body.removeChild(overlay);
-        }
-      }, 300);
-    }
-  };
-
-  closeButton.onclick = closeNotification;
-
-  content.appendChild(icon);
-  content.appendChild(title);
-  content.appendChild(text);
-  content.appendChild(closeButton);
-  overlay.appendChild(content);
-  document.body.appendChild(overlay);
-
-  setTimeout(() => {
-    overlay.classList.add("show");
-  }, 10);
-
-  setTimeout(closeNotification, 3000);
-}
-
-// ==========================
 // CARRINHO - LOCALSTORAGE
 // ==========================
 function loadCart() {

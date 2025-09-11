@@ -1,12 +1,9 @@
 {
   "hero": [
     {
-      "src": "static/images/uploads/vestido-red.jpg",
-      "alt": "Modelo com vestido verde elegante"
-    },
-    {
-      "src": "static/images/uploads/img2.webp",
-      "alt": "Modelo com vestido vermelho na praia"
+      "src_desktop": "static/images/uploads/vestido-red.jpg",
+      "src_mobile": "static/images/uploads/img2.webp",
+      "alt": "Modelo com vestido elegante"
     }
   ],
   "produtos": [
@@ -27,7 +24,7 @@
       "createdAt": "2025-08-30T10:00:00.000Z"
     },
     {
-      "id": "vestido-rose",
+      "id": "vestido-rose-2",
       "nome": "Vestido Rosê Delicado",
       "descricao": "Vestido rosê delicado, ótimo para eventos.",
       "preco": 129.9,
@@ -43,7 +40,7 @@
       "createdAt": "2025-08-30T10:00:00.000Z"
     },
     {
-      "id": "vestido-rose",
+      "id": "vestido-rose-3",
       "nome": "Vestido Rosê Delicado",
       "descricao": "Vestido rosê delicado, ótimo para eventos.",
       "preco": 129.9,
@@ -57,7 +54,7 @@
       "createdAt": "2025-08-30T10:00:00.000Z"
     },
     {
-      "id": "vestido-rose",
+      "id": "vestido-rose-4",
       "nome": "Vestido Rosê Delicado",
       "descricao": "Vestido rosê delicado, ótimo para eventos.",
       "preco": 129.9,
@@ -71,7 +68,7 @@
       "createdAt": "2025-08-30T10:00:00.000Z"
     },
     {
-      "id": "vestido-rose",
+      "id": "vestido-rose-5",
       "nome": "Vestido Rosê Delicado",
       "descricao": "Vestido rosê delicado, ótimo para eventos.",
       "preco": 129.9,

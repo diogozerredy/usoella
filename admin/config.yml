@@ -21,7 +21,8 @@ collections:
           widget: "list"
           summary: "{{fields.alt}}"
           fields:
-            - { label: "Imagem", name: "src", widget: "image" }
+            - { label: "Imagem (Desktop - 1920x640px)", name: "src_desktop", widget: "image" }
+            - { label: "Imagem (Mobile - 800x1000px)", name: "src_mobile", widget: "image" }
             - { label: "Texto Alternativo (opcional)", name: "alt", widget: "string", required: false }
         - label: "Produtos"
           name: "produtos"
@@ -77,6 +78,6 @@ collections:
       name: "hero"
       fields:
         - { name: "titulo", label: "Título", widget: "string" }
-        - { name: "imagem", label: "Imagem", widget: "image" } 
+        - { name: "imagem", label: "Imagem (800x1000px)", widget: "image" } 
         - { name: "cta", label: "Texto do botão", widget: "string" }
         - { name: "cta_link", label: "Link do botão", widget: "string" }
