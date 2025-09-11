@@ -1,39 +1,47 @@
 // ============================
-// Produtos: carregar do CMS (data/produtos.json) + filtros
+// Produtos e Banner: carregar do CMS
 // ============================
 
-async function fetchProdutosJSON() {
+async function fetchShopData() {
   try {
-    const res = await fetch("data/produtos.json", { cache: "no-store" });
-    if (!res.ok) throw new Error("Falha ao carregar produtos.json");
-    const data = await res.json();
-    if (data && Array.isArray(data.hero)) {
-      // **INÍCIO DA CORREÇÃO DO BANNER**
-      window.__shopHeroImages = data.hero.map((it) => {
-        // Garante que o caminho da imagem seja extraído corretamente, seja string ou objeto
-        const desktopSrc =
-          typeof it.src_desktop === "string"
-            ? it.src_desktop
-            : it.src_desktop?.src;
-        const mobileSrc =
-          typeof it.src_mobile === "string"
-            ? it.src_mobile
-            : it.src_mobile?.src;
+    // Busca os produtos
+    const produtosRes = await fetch("data/produtos.json", {
+      cache: "no-store",
+    });
+    if (!produtosRes.ok) throw new Error("Falha ao carregar produtos.json");
+    const produtosData = await produtosRes.json();
+    window.__produtos = Array.isArray(produtosData.produtos)
+      ? produtosData.produtos
+      : [];
 
-        const src = window.innerWidth <= 768 ? mobileSrc : desktopSrc;
-        return {
-          src: src || desktopSrc || mobileSrc || "",
-          alt: it.alt || "",
-        };
-      });
-      // **FIM DA CORREÇÃO DO BANNER**
+    // Busca o banner do shop
+    const bannerRes = await fetch("data/banner.json", { cache: "no-store" });
+    if (bannerRes.ok) {
+      const bannerData = await bannerRes.json();
+      if (bannerData && Array.isArray(bannerData.banner_images)) {
+        window.__shopBannerImages = bannerData.banner_images.map((it) => {
+          const desktopSrc =
+            typeof it.src_desktop === "string"
+              ? it.src_desktop
+              : it.src_desktop?.src;
+          const mobileSrc =
+            typeof it.src_mobile === "string"
+              ? it.src_mobile
+              : it.src_mobile?.src;
+          const src = window.innerWidth <= 768 ? mobileSrc : desktopSrc;
+          return {
+            src: src || desktopSrc || mobileSrc || "",
+            alt: it.alt || "",
+          };
+        });
+      }
     } else {
-      window.__shopHeroImages = window.__shopHeroImages || [];
+      window.__shopBannerImages = [];
     }
-    return Array.isArray(data.produtos) ? data.produtos : [];
   } catch (e) {
     console.error(e);
-    return [];
+    window.__produtos = window.__produtos || [];
+    window.__shopBannerImages = window.__shopBannerImages || [];
   }
 }
 
@@ -75,10 +83,6 @@ function getProductThumbnail(p) {
       const firstImage = firstColorGroup.imagens_cor[0];
       return typeof firstImage === "string" ? firstImage : firstImage.src;
     }
-  }
-  if (p.imagens && p.imagens.length > 0) {
-    const firstImage = p.imagens[0];
-    return typeof firstImage === "string" ? firstImage : firstImage.src;
   }
   return "https://via.placeholder.com/600x600?text=Produto";
 }
@@ -203,12 +207,12 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
   });
 }
 
-function initShopHero() {
+function initShopBanner() {
   const carouselEl = document.getElementById("shop-hero-carousel");
   if (!carouselEl) return;
 
-  let images = Array.isArray(window.__shopHeroImages)
-    ? window.__shopHeroImages.slice()
+  let images = Array.isArray(window.__shopBannerImages)
+    ? window.__shopBannerImages.slice()
     : [];
   if (images.length === 0) {
     images = [
@@ -300,59 +304,10 @@ function initShopHero() {
   startAutoplay();
 }
 
-function initNovidadesCarousel() {
-  if (window.innerWidth < 981) return;
-
-  const track = document.getElementById("product-list");
-  const prevBtn = document.getElementById("novidades-prev");
-  const nextBtn = document.getElementById("novidades-next");
-
-  if (!track || !prevBtn || !nextBtn) return;
-
-  const products = track.querySelectorAll(".card");
-  const productsCount = products.length;
-  const itemsVisible = 4;
-
-  if (productsCount <= itemsVisible) {
-    prevBtn.style.display = "none";
-    nextBtn.style.display = "none";
-    return;
-  }
-
-  prevBtn.style.display = "flex";
-  nextBtn.style.display = "flex";
-
-  let currentIndex = 0;
-  const maxIndex = productsCount - itemsVisible;
-
-  function updateCarousel() {
-    const offset = currentIndex * -25;
-    track.style.transform = `translateX(${offset}%)`;
-    prevBtn.disabled = currentIndex === 0;
-    nextBtn.disabled = currentIndex === maxIndex;
-  }
-
-  nextBtn.addEventListener("click", () => {
-    if (currentIndex < maxIndex) {
-      currentIndex++;
-      updateCarousel();
-    }
-  });
-
-  prevBtn.addEventListener("click", () => {
-    if (currentIndex > 0) {
-      currentIndex--;
-      updateCarousel();
-    }
-  });
-
-  updateCarousel();
-}
-
 async function initPage() {
-  const allProducts = await fetchProdutosJSON();
+  await fetchShopData();
 
-  allProducts.sort((a, b) => {
+  (window.__produtos || []).sort((a, b) => {
     const aDestaque = a.destaque === true;
     const bDestaque = b.destaque === true;
     if (aDestaque !== bDestaque) return bDestaque - aDestaque;
@@ -361,21 +316,21 @@ async function initPage() {
     return db - da;
   });
 
-  window.__produtos = allProducts;
   const isShopPage = window.location.pathname.includes("shop.html");
 
   if (isShopPage) {
     const categories = [
-      ...new Set(allProducts.map((p) => p.categoria).filter(Boolean)),
+      ...new Set(
+        (window.__produtos || []).map((p) => p.categoria).filter(Boolean)
+      ),
     ].sort();
     buildFilters(categories);
-    renderProdutos(allProducts, "__ALL__");
-    initShopHero();
+    renderProdutos(window.__produtos, "__ALL__");
+    initShopBanner();
   } else {
     // Homepage
-    const novidades = allProducts.slice(0, 10);
+    const novidades = (window.__produtos || []).slice(0, 10);
     renderProdutos(novidades, "__ALL__");
-    initNovidadesCarousel();
   }
 }
 
