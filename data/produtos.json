@@ -89,17 +89,17 @@
     {
       "imagens": [
         {
-          "src": "static/images/uploads/whatsapp-image-2025-08-27-at-6.12.05-pm.jpeg",
-          "color": "ROSA",
+          "src": "/static/images/uploads/img2.webp",
+          "color": "red",
           "cores": "PINK"
         },
         {
-          "src": "static/images/uploads/img1.jpg",
+          "src": "/static/images/uploads/vestido-verde.jpg",
           "color": "VERDE",
           "cores": "GREEN"
         },
         {
-          "src": "/static/images/uploads/images.jpg",
+          "src": "/static/images/uploads/vestido-rosa.jpeg",
           "color": "VERMELHO",
           "cores": "RED"
         }
@@ -165,7 +165,13 @@
   "hero": [
     {
       "src_desktop": "/static/images/uploads/vestido-red.jpg",
-      "src_mobile": "/static/images/uploads/vestido-red.jpg"
+      "src_mobile": "/static/images/uploads/vestido-red.jpg",
+      "alt": "alt"
+    },
+    {
+      "src_desktop": "/static/images/uploads/vestido-rosa.jpeg",
+      "src_mobile": "/static/images/uploads/vestido-rosa.jpeg",
+      "alt": "ffff"
     }
   ]
 }
