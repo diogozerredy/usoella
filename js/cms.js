@@ -316,7 +316,12 @@ async function initPage() {
     return db - da;
   });
 
-  const isShopPage = window.location.pathname.includes("shop.html");
+  // CORREÇÃO APLICADA AQUI
+  const path = window.location.pathname;
+  const isShopPage =
+    path.endsWith("/shop") ||
+    path.endsWith("/shop.html") ||
+    path.endsWith("/shop/");
 
   if (isShopPage) {
     const categories = [
