@@ -1,10 +1,10 @@
 const fs = require("fs-extra");
 const path = require("path");
 const glob = require("glob");
+const matter = require("gray-matter"); // Nova ferramenta para ler .md
 
 console.log("Iniciando o script de construção...");
 
-// CORREÇÃO: Removida a referência à pasta 'usoella'
 const dataPath = path.join(__dirname, "..", "data");
 const productsSourceDir = path.join(dataPath, "produtos");
 const categoriesSourceDir = path.join(dataPath, "categorias");
@@ -12,23 +12,32 @@ const categoriesSourceDir = path.join(dataPath, "categorias");
 const productsOutputFile = path.join(dataPath, "produtos.json");
 const categoriesOutputFile = path.join(dataPath, "categorias.json");
 
-// (O resto do arquivo continua exatamente o mesmo)
-
-async function consolidateJson(sourceDir, outputFile, wrapperKey) {
+// Função para consolidar dados de uma pasta para um arquivo
+async function consolidateData(sourceDir, outputFile, wrapperKey) {
   try {
-    const files = await glob.sync(path.join(sourceDir, "**/*.json"));
+    // CORREÇÃO: Procura por arquivos .json E .md
+    const files = await glob.sync(path.join(sourceDir, "**/*.{json,md}"));
     console.log(`Encontrados ${files.length} arquivos em ${sourceDir}`);
 
     let allData = [];
     for (const file of files) {
       try {
-        const content = await fs.readJson(file);
+        const fileContent = await fs.readFile(file, "utf-8");
+        let content;
+
+        // Se for markdown, extrai os dados do "cabeçalho" (front matter)
+        if (path.extname(file) === ".md") {
+          content = matter(fileContent).data;
+        } else {
+          content = JSON.parse(fileContent);
+        }
+
         if (!content.id) {
-          content.id = path.basename(file, ".json");
+          content.id = path.basename(file, path.extname(file));
         }
         allData.push(content);
       } catch (err) {
-        console.error(`Erro ao ler o arquivo JSON: ${file}`, err);
+        console.error(`Erro ao processar o arquivo: ${file}`, err);
       }
     }
 
@@ -43,12 +52,12 @@ async function consolidateJson(sourceDir, outputFile, wrapperKey) {
 
 async function runBuild() {
   await fs.ensureDir(dataPath);
-  await consolidateJson(
+  await consolidateData(
     categoriesSourceDir,
     categoriesOutputFile,
     "categorias"
   );
-  await consolidateJson(productsSourceDir, productsOutputFile, "produtos");
+  await consolidateData(productsSourceDir, productsOutputFile, "produtos");
   console.log("Script de construção finalizado com sucesso!");
 }
 
