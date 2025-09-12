@@ -1,0 +1,19 @@
+---
+nome: "VESTSIDO "
+descricao: FOI ADICIONADO PARA TESTE
+preco: 128
+categoria: VESTIDOS
+imagens_por_cor:
+  - cor: VERMELHO
+    imagens_cor:
+      - /static/images/uploads/img2.webp
+      - /static/images/uploads/vestido-red.jpg
+tamanhos:
+  - P
+  - M
+  - G
+  - GG
+destaque: false
+ativo: true
+createdAt: 2025-09-12T03:15:08.505Z
+---
