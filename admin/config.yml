@@ -2,17 +2,18 @@ backend:
   name: git-gateway
   branch: main
 
+# CORREÇÃO: Aponta para a pasta raiz, já que o site não está dentro de 'usoella' ou 'loja'
 media_folder: "static/images/uploads"
 public_folder: "/static/images/uploads"
 
 publish_mode: editorial_workflow
 
 collections:
-  - name: "pagina_inicial"
-    label: "Página Inicial"
+  - name: "paginas"
+    label: "Páginas"
     files:
       - file: "data/hero.json"
-        label: "Hero (Topo da Página)"
+        label: "Hero (Página Inicial)"
         name: "hero"
         fields:
           - { name: "titulo", label: "Título", widget: "string" }
@@ -32,10 +33,6 @@ collections:
             widget: "image"
             hint: "Tamanho recomendado: 600x800px (proporção 3:4)"
           - { name: "texto", label: "Texto da Seção", widget: "markdown" }
-
-  - name: "loja"
-    label: "Loja"
-    files:
       - file: "data/banner.json"
         label: "Banner (Página Shop)"
         name: "banner_shop"
@@ -54,36 +51,48 @@ collections:
                 widget: "image"
                 hint: "Tamanho ideal: 800x1000px (proporção 4:5)"
               - { label: "Texto Alternativo (opcional)", name: "alt", widget: "string", required: false }
-      - file: "data/produtos.json"
-        label: "Produtos"
-        name: "produtos"
-        format: "json"
+
+  # NOVA COLEÇÃO DE CATEGORIAS
+  - name: "categorias"
+    label: "Categorias de Produtos"
+    folder: "data/categorias"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Nome da Categoria", name: "nome", widget: "string" }
+
+  # NOVA COLEÇÃO DE PRODUTOS
+  - name: "produtos"
+    label: "Produtos"
+    folder: "data/produtos"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Nome", name: "nome", widget: "string" }
+      - { label: "Descrição", name: "descricao", widget: "text" }
+      - { label: "Preço (R$)", name: "preco", widget: "number", value_type: "float", min: 0 }
+      - label: "Categoria"
+        name: "categoria"
+        widget: "relation"
+        collection: "categorias"
+        search_fields: ["nome"]
+        value_field: "nome"
+        display_fields: ["nome"]
+      - label: "Imagens por Cor"
+        name: "imagens_por_cor"
+        widget: "list"
+        summary: "Cor: {{fields.cor}} ({{fields.imagens_cor.length}} imagem(ns))"
         fields:
-          - label: "Produtos"
-            name: "produtos"
+          - { label: "Cor", name: "cor", widget: "string" }
+          - name: "imagens_cor"
+            label: "Imagens desta Cor"
             widget: "list"
-            summary: "{{fields.nome}} — R$ {{fields.preco}} ({{fields.categoria}})"
-            fields:
-              - { label: "ID/Slug", name: "id", widget: "string", pattern: ["^[a-z0-9-]+$", "Use minúsculas e hífens."] }
-              - { label: "Nome", name: "nome", widget: "string" }
-              - { label: "Descrição", name: "descricao", widget: "text" }
-              - { label: "Preço (R$)", name: "preco", widget: "number", value_type: "float", min: 0 }
-              - { label: "Categoria", name: "categoria", widget: "string" }
-              - label: "Imagens por Cor"
-                name: "imagens_por_cor"
-                widget: "list"
-                summary: "Cor: {{fields.cor}} ({{fields.imagens_cor.length}} imagem(ns))"
-                fields:
-                  - { label: "Cor", name: "cor", widget: "string" }
-                  - name: "imagens_cor"
-                    label: "Imagens desta Cor"
-                    widget: "list"
-                    hint: "Tamanho ideal para todas as imagens: 800x1000px (proporção 4:5)"
-                    field: {label: "Imagem", name: "src", widget: "image"}
-              - label: "Tamanhos"
-                name: "tamanhos"
-                widget: "list"
-                field: { label: "Tamanho", name: "tam", widget: "string" }
-              - { label: "Destaque na página inicial", name: "destaque", widget: "boolean", default: false }
-              - { label: "Disponível para venda", name: "ativo", widget: "boolean", default: true }
-              - { label: "Criado em", name: "createdAt", widget: "datetime" }
+            hint: "Tamanho ideal para todas as imagens: 800x1000px (proporção 4:5)"
+            field: {label: "Imagem", name: "src", widget: "image"}
+      - label: "Tamanhos Disponíveis"
+        name: "tamanhos"
+        widget: "list"
+        field: { label: "Tamanho", name: "tam", widget: "string" }
+      - { label: "Destaque na página inicial", name: "destaque", widget: "boolean", default: false }
+      - { label: "Disponível para venda", name: "ativo", widget: "boolean", default: true }
+      - { label: "Criado em", name: "createdAt", widget: "datetime" }
