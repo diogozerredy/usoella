@@ -4,7 +4,6 @@
 
 async function fetchShopData() {
   try {
-    // Busca os produtos (já consolidados pelo build script)
     const produtosRes = await fetch("/data/produtos.json", {
       cache: "no-store",
     });
@@ -14,7 +13,6 @@ async function fetchShopData() {
       ? produtosData.produtos
       : [];
 
-    // MODIFICAÇÃO: Busca as categorias (consolidadas pelo build script)
     const categoriasRes = await fetch("/data/categorias.json", {
       cache: "no-store",
     });
@@ -27,7 +25,6 @@ async function fetchShopData() {
       window.__categorias = [];
     }
 
-    // Busca o banner do shop
     const bannerRes = await fetch("/data/banner.json", { cache: "no-store" });
     if (bannerRes.ok) {
       const bannerData = await bannerRes.json();
@@ -59,7 +56,6 @@ async function fetchShopData() {
   }
 }
 
-// MODIFICAÇÃO: A função agora usa a lista de categorias carregada
 function buildFilters(categories) {
   const filtersEl = document.getElementById("product-filters");
   if (!filtersEl) return;
@@ -71,7 +67,6 @@ function buildFilters(categories) {
   allBtn.dataset.cat = "__ALL__";
   filtersEl.appendChild(allBtn);
 
-  // Usa os nomes das categorias vindas do CMS
   categories.forEach((cat) => {
     if (!cat.nome) return;
     const b = document.createElement("button");
@@ -98,7 +93,6 @@ function getProductThumbnail(p) {
     const firstColorGroup = p.imagens_por_cor[0];
     if (firstColorGroup.imagens_cor && firstColorGroup.imagens_cor.length > 0) {
       const firstImage = firstColorGroup.imagens_cor[0];
-      // Suporta tanto string simples quanto objeto com 'src'
       return typeof firstImage === "string" ? firstImage : firstImage.src;
     }
   }
@@ -108,7 +102,6 @@ function getProductThumbnail(p) {
 function productCardHTML(p) {
   const price = Number(p.preco || 0);
   const thumb = getProductThumbnail(p);
-  // Adiciona verificação para o ID
   const productId = p.id || `prod_${Math.random().toString(36).substr(2, 9)}`;
 
   return `
@@ -159,19 +152,8 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
         console.warn("Produto não encontrado para id", id);
         return;
       }
-
-      const productForModal = {
-        id: prod.id,
-        nome: prod.nome,
-        descricao: prod.descricao,
-        preco: Number(prod.preco || 0),
-        imagens_por_cor: Array.isArray(prod.imagens_por_cor)
-          ? prod.imagens_por_cor
-          : [],
-        tamanhos: prod.tamanhos || [],
-      };
       if (typeof openProductModal === "function") {
-        openProductModal(productForModal);
+        openProductModal(prod);
       } else {
         console.warn("openProductModal não disponível.");
       }
@@ -255,7 +237,6 @@ function initShopBanner() {
   const prevBtn = carouselEl.querySelector("#hero-prev");
   const nextBtn = carouselEl.querySelector("#hero-next");
   const dotsEl = carouselEl.querySelector("#hero-dots");
-
   let index = 0;
   let autoplayTimer = null;
 
@@ -318,40 +299,120 @@ function initShopBanner() {
   });
   carouselEl.addEventListener("mouseenter", stopAutoplay);
   carouselEl.addEventListener("mouseleave", startAutoplay);
-
   render();
   startAutoplay();
+}
+
+function initNovidadesCarousel() {
+  const track = document.querySelector(".carousel-track");
+  const prevBtn = document.getElementById("novidades-prev");
+  const nextBtn = document.getElementById("novidades-next");
+  if (!track || !prevBtn || !nextBtn) return;
+
+  let index = 0;
+  const items = Array.from(track.children);
+  const totalItems = items.length;
+
+  let itemsVisible = 4;
+  if (window.innerWidth <= 980) itemsVisible = 2;
+  if (window.innerWidth <= 600) itemsVisible = 1;
+
+  const maxIndex = totalItems - itemsVisible;
+
+  function updateCarousel() {
+    if (totalItems <= itemsVisible) {
+      track.style.transform = "translateX(0)";
+      prevBtn.style.display = "none";
+      nextBtn.style.display = "none";
+      return;
+    }
+
+    prevBtn.style.display = "flex";
+    nextBtn.style.display = "flex";
+
+    const itemWidth = items[0].getBoundingClientRect().width;
+    // Adiciona um pequeno espaçamento (gap) no cálculo se houver
+    const gap = parseFloat(getComputedStyle(track).gap) || 0;
+    const offset = index * -(itemWidth + gap);
+    track.style.transform = `translateX(${offset}px)`;
+
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index >= maxIndex;
+  }
+
+  // Pequeno atraso para garantir que o layout foi calculado
+  setTimeout(() => {
+    updateCarousel();
+    window.addEventListener("resize", () => {
+      // Recalcula em caso de redimensionamento
+      if (window.innerWidth <= 980) itemsVisible = 2;
+      if (window.innerWidth <= 600) itemsVisible = 1;
+      updateCarousel();
+    });
+  }, 100);
+
+  prevBtn.addEventListener("click", () => {
+    if (index > 0) {
+      index--;
+      updateCarousel();
+    }
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (index < maxIndex) {
+      index++;
+      updateCarousel();
+    }
+  });
 }
 
 async function initPage() {
   await fetchShopData();
 
-  (window.__produtos || []).sort((a, b) => {
-    const aDestaque = a.destaque === true;
-    const bDestaque = b.destaque === true;
-    if (aDestaque !== bDestaque) return bDestaque - aDestaque;
+  // Ordena todos os produtos pela data de criação, do mais novo para o mais antigo
+  const allProductsSorted = (window.__produtos || []).sort((a, b) => {
     const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
     const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
     return db - da;
   });
 
   const path = window.location.pathname;
-  const isShopPage =
-    path.endsWith("/shop") ||
-    path.endsWith("/shop.html") ||
-    path.endsWith("/shop/");
+  const isHomePage =
+    path === "/" || path.endsWith("/index.html") || path.endsWith("/home");
+  const isShopPage = path.includes("/shop");
 
   if (isShopPage) {
-    // MODIFICAÇÃO: Passa a lista de categorias para a função
     buildFilters(window.__categorias || []);
-    renderProdutos(window.__produtos, "__ALL__");
+    // Na página shop, mostra todos os produtos ordenados por data
+    renderProdutos(allProductsSorted, "__ALL__");
     initShopBanner();
-  } else {
-    // Homepage
-    const novidades = (window.__produtos || [])
-      .filter((p) => p.destaque)
-      .slice(0, 10);
+  } else if (isHomePage) {
+    // *** NOVA LÓGICA PARA A PÁGINA INICIAL ***
+
+    // 1. Separa os produtos em destaque e os não-destaques
+    const destaques = allProductsSorted.filter((p) => p.destaque === true);
+    const recentesNaoDestaques = allProductsSorted.filter(
+      (p) => p.destaque !== true
+    );
+
+    // 2. Cria a lista final: primeiro todos os destaques, depois preenche com os mais recentes
+    let novidades = [...destaques];
+
+    // 3. Adiciona produtos recentes (que ainda não estão na lista) até atingir o limite de 10
+    for (const produto of recentesNaoDestaques) {
+      if (novidades.length >= 10) break;
+      // Garante que não adicionará um produto duplicado (embora a lógica já previna isso)
+      if (!novidades.some((p) => p.id === produto.id)) {
+        novidades.push(produto);
+      }
+    }
+
+    // 4. Garante que a lista final tenha no máximo 10 itens
+    novidades = novidades.slice(0, 10);
+
+    // 5. Renderiza os produtos e ativa o carrossel
     renderProdutos(novidades, "__ALL__");
+    initNovidadesCarousel();
   }
 }
 
