@@ -5,7 +5,7 @@
 async function fetchShopData() {
   try {
     // Busca os produtos
-    const produtosRes = await fetch("data/produtos.json", {
+    const produtosRes = await fetch("/data/produtos.json", {
       cache: "no-store",
     });
     if (!produtosRes.ok) throw new Error("Falha ao carregar produtos.json");
@@ -15,7 +15,7 @@ async function fetchShopData() {
       : [];
 
     // Busca o banner do shop
-    const bannerRes = await fetch("data/banner.json", { cache: "no-store" });
+    const bannerRes = await fetch("/data/banner.json", { cache: "no-store" });
     if (bannerRes.ok) {
       const bannerData = await bannerRes.json();
       if (bannerData && Array.isArray(bannerData.banner_images)) {

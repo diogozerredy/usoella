@@ -1,9 +1,3 @@
 {
-  "banner_images": [
-    {
-      "src_desktop": "/static/images/uploads/vestido-red.jpg",
-      "src_mobile": "/static/images/uploads/vestido-red.jpg",
-      "alt": "Vestido vermelho"
-    }
-  ]
+  "banner_images": []
 }
