@@ -13,7 +13,7 @@ tamanhos:
   - M
   - G
   - GG
-destaque: false
+destaque: true
 ativo: true
 createdAt: 2025-09-12T03:15:08.505Z
 ---
