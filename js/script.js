@@ -180,14 +180,14 @@ function renderCartGeneric({ containerId, totalId, isModal = false }) {
         container.innerHTML += `
           <div class="cart-item-preview" data-cart-id="${item.id}">
             <img src="${thumb}" alt="${item.name}">
-            <div>
-              <strong>${item.name}</strong><br>
+            <div style="text-transform: capitalize;">
+              <strong>${item.name}</strong>
               ${item.qty}x R$ ${item.price.toFixed(2)}<br>
               <small>Cor: <strong>${
                 item.cor ?? "—"
-              }</strong> — Tamanho: <strong>${
+              }</strong></br>Tamanho: <strong>${
           item.tamanho ?? "—"
-        }</strong></small><br>
+        }</strong></small>
               <div style="margin-top:.35rem;">
                 <button class="btn btn-outline modal-remove-btn" data-remove-id="${
                   item.id
@@ -197,11 +197,17 @@ function renderCartGeneric({ containerId, totalId, isModal = false }) {
           </div>
         `;
       } else {
+        // Para a página carrinho.html
         container.innerHTML += `
           <div class="cart-item">
             <img src="${thumb}" alt="${item.name}">
             <div class="cart-item-info">
               <strong>${item.name}</strong>
+              <small style="display: block; margin-top: 0.3rem; color: #555; text-transform: capitalize;">
+                Cor: <b>${item.cor ?? "—"}</b></br>Tam: <b>${
+          item.tamanho ?? "—"
+        }</b>
+              </small>
               <span>R$ ${item.price.toFixed(2)}</span>
             </div>
             <div>

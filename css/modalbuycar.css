@@ -399,10 +399,24 @@
   #cart-modal .cart-modal-content > div[style] .btn {
     width: 100%;
   }
+  #produto-modal .cart-modal-content {
+    /* Ocupa mais da tela e tem um padding menor */
+    width: calc(100% - 1.5rem);
+    max-height: calc(100vh - 1.5rem);
+  }
+
+  /* Deixa a descrição com melhor espaçamento */
+  .modal-produto-descricao {
+    font-size: 0.95rem;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
 }
 
 /* telas muito pequenas: imagem ainda menor para melhor encaixe */
-@media (max-width: 420px) {
+@media (max-width: 480px) {
   #cart-modal .cart-modal-content .cart-item-preview img {
   width: 7em;
     max-height: none;
@@ -414,6 +428,28 @@
   #cart-modal .cart-modal-content .modal-remove-btn {
     padding: 0.16rem 0.36rem;
     font-size: 0.72rem;
+  } #cart-modal .cart-modal-content {
+      width: 95%; /* Ocupa quase toda a largura */
+  }
+
+  /* Melhora o alinhamento dos itens no carrinho preview */
+  #cart-modal .cart-item-preview {
+      gap: 1rem;
+      align-items: flex-start;
+  }
+
+  #cart-modal .cart-item-preview img {
+      width: 60px; /* Imagem um pouco maior */
+      flex-shrink: 0;
+  }
+
+  /* Organiza melhor o texto */
+  #cart-modal .cart-item-preview div {
+      line-height: 1.4;
+  }
+
+  #cart-modal .cart-item-preview small {
+      font-size: 0.8rem;
   }
 }
 

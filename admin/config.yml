@@ -8,11 +8,11 @@ public_folder: "/static/images/uploads"
 publish_mode: editorial_workflow
 
 collections:
-  - name: "pagina_inicial"
-    label: "Página Inicial"
+  - name: "paginas"
+    label: "Páginas"
     files:
       - file: "data/hero.json"
-        label: "Hero (Topo da Página Inicial)"
+        label: "Hero (Página Inicial)"
         name: "hero"
         fields:
           - { name: "titulo", label: "Título", widget: "string" }
@@ -26,10 +26,6 @@ collections:
           - { name: "titulo", label: "Título", widget: "string" }
           - { name: "imagem", label: "Imagem", widget: "image" }
           - { name: "texto", label: "Texto da Seção", widget: "markdown" }
-
-  - name: "loja"
-    label: "Loja"
-    files:
       - file: "data/banner.json"
         label: "Banner (Página Shop)"
         name: "banner_shop"
@@ -39,35 +35,45 @@ collections:
             widget: "list"
             summary: "{{fields.alt}}"
             fields:
-              - { label: "Imagem (Desktop - 1920x640px)", name: "src_desktop", widget: "image" }
-              - { label: "Imagem (Mobile - 800x1000px)", name: "src_mobile", widget: "image" }
-              - { label: "Texto Alternativo (opcional)", name: "alt", widget: "string", required: false }
-      - file: "data/produtos.json"
-        label: "Produtos"
-        name: "produtos"
-        format: "json"
+              - { label: "Imagem (Desktop)", name: "src_desktop", widget: "image" }
+              - { label: "Imagem (Mobile)", name: "src_mobile", widget: "image" }
+              - { label: "Texto Alternativo", name: "alt", widget: "string", required: false }
+
+  - name: "categorias"
+    label: "Categorias de Produtos"
+    folder: "data/categorias"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Nome da Categoria", name: "nome", widget: "string" }
+
+  - name: "produtos"
+    label: "Produtos"
+    folder: "data/produtos"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Nome", name: "nome", widget: "string" }
+      - { label: "Descrição", name: "descricao", widget: "text" }
+      - { label: "Preço (R$)", name: "preco", widget: "number", value_type: "float", min: 0 }
+      - label: "Categoria"
+        name: "categoria"
+        widget: "relation"
+        collection: "categorias"
+        search_fields: ["nome"]
+        value_field: "nome"
+        display_fields: ["nome"]
+      - label: "Imagens por Cor"
+        name: "imagens_por_cor"
+        widget: "list"
+        summary: "Cor: {{fields.cor}} ({{fields.imagens_cor.length}} imagem(ns))"
         fields:
-          - label: "Produtos"
-            name: "produtos"
-            widget: "list"
-            summary: "{{fields.nome}} — R$ {{fields.preco}} ({{fields.categoria}})"
-            fields:
-              - { label: "ID/Slug", name: "id", widget: "string", pattern: ["^[a-z0-9-]+$", "Use minúsculas e hífens."] }
-              - { label: "Nome", name: "nome", widget: "string" }
-              - { label: "Descrição", name: "descricao", widget: "text" }
-              - { label: "Preço (R$)", name: "preco", widget: "number", value_type: "float", min: 0 }
-              - { label: "Categoria", name: "categoria", widget: "select", options: ["Camisetas","Sapatos","Bolsas","Acessórios","Outros"] }
-              - label: "Imagens (cada imagem com sua cor)"
-                name: "imagens"
-                widget: "list"
-                fields:
-                  - { label: "Imagem", name: "src", widget: "image" }
-                  - { label: "Cor", name: "color", widget: "string", hint: "Nome da cor (rosa, branco...)" }
-              - label: "Tamanhos"
-                name: "tamanhos"
-                widget: "list"
-                field: { label: "Tamanho", name: "tam", widget: "string" }
-              - { label: "Link (opcional)", name: "link", widget: "string", required: false }
-              - { label: "Destaque", name: "destaque", widget: "boolean", default: false }
-              - { label: "Disponível", name: "ativo", widget: "boolean", default: true }
-              - { label: "Criado em", name: "createdAt", widget: "datetime" }
+          - { label: "Cor", name: "cor", widget: "string" }
+          - { label: "Imagens desta Cor", name: "imagens_cor", widget: "list", field: {label: "Imagem", name: "src", widget: "image"} }
+      - label: "Tamanhos Disponíveis"
+        name: "tamanhos"
+        widget: "list"
+        field: { label: "Tamanho", name: "tam", widget: "string" }
+      - { label: "Produto em Destaque (aparece na pág. inicial)", name: "destaque", widget: "boolean", default: false }
+      - { label: "Disponível para venda", name: "ativo", widget: "boolean", default: true }
+      - { label: "Criado em", name: "createdAt", widget: "datetime", default: "" }
