@@ -4,7 +4,7 @@
 
 async function fetchShopData() {
   try {
-    // Busca os produtos
+    // Busca os produtos (já consolidados pelo build script)
     const produtosRes = await fetch("/data/produtos.json", {
       cache: "no-store",
     });
@@ -13,6 +13,19 @@ async function fetchShopData() {
     window.__produtos = Array.isArray(produtosData.produtos)
       ? produtosData.produtos
       : [];
+
+    // MODIFICAÇÃO: Busca as categorias (consolidadas pelo build script)
+    const categoriasRes = await fetch("/data/categorias.json", {
+      cache: "no-store",
+    });
+    if (categoriasRes.ok) {
+      const categoriasData = await categoriasRes.json();
+      window.__categorias = Array.isArray(categoriasData.categorias)
+        ? categoriasData.categorias
+        : [];
+    } else {
+      window.__categorias = [];
+    }
 
     // Busca o banner do shop
     const bannerRes = await fetch("/data/banner.json", { cache: "no-store" });
@@ -41,10 +54,12 @@ async function fetchShopData() {
   } catch (e) {
     console.error(e);
     window.__produtos = window.__produtos || [];
+    window.__categorias = window.__categorias || [];
     window.__shopBannerImages = window.__shopBannerImages || [];
   }
 }
 
+// MODIFICAÇÃO: A função agora usa a lista de categorias carregada
 function buildFilters(categories) {
   const filtersEl = document.getElementById("product-filters");
   if (!filtersEl) return;
@@ -56,11 +71,13 @@ function buildFilters(categories) {
   allBtn.dataset.cat = "__ALL__";
   filtersEl.appendChild(allBtn);
 
+  // Usa os nomes das categorias vindas do CMS
   categories.forEach((cat) => {
+    if (!cat.nome) return;
     const b = document.createElement("button");
     b.className = "filter-btn";
-    b.textContent = cat;
-    b.dataset.cat = cat;
+    b.textContent = cat.nome;
+    b.dataset.cat = cat.nome;
     filtersEl.appendChild(b);
   });
 
@@ -81,6 +98,7 @@ function getProductThumbnail(p) {
     const firstColorGroup = p.imagens_por_cor[0];
     if (firstColorGroup.imagens_cor && firstColorGroup.imagens_cor.length > 0) {
       const firstImage = firstColorGroup.imagens_cor[0];
+      // Suporta tanto string simples quanto objeto com 'src'
       return typeof firstImage === "string" ? firstImage : firstImage.src;
     }
   }
@@ -90,21 +108,20 @@ function getProductThumbnail(p) {
 function productCardHTML(p) {
   const price = Number(p.preco || 0);
   const thumb = getProductThumbnail(p);
+  // Adiciona verificação para o ID
+  const productId = p.id || `prod_${Math.random().toString(36).substr(2, 9)}`;
+
   return `
-    <article class="card" data-prod-id="${p.id}">
+    <article class="card" data-prod-id="${productId}">
       <div class="thumb">
-        <button class="card-prev" aria-label="Imagem anterior" data-prod-id="${
-          p.id
-        }">&#10094;</button>
+        <button class="card-prev" aria-label="Imagem anterior" data-prod-id="${productId}">&#10094;</button>
         <img class="card-thumb-img" src="${thumb}" alt="${p.nome || ""}">
-        <button class="card-next" aria-label="Próxima imagem" data-prod-id="${
-          p.id
-        }">&#10095;</button>
+        <button class="card-next" aria-label="Próxima imagem" data-prod-id="${productId}">&#10095;</button>
       </div>
       <div class="card-body">
         <h3>${p.nome || ""}</h3>
         <div class="price">R$ ${price.toFixed(2)}</div>
-        <button class="btn btn-primary btn-open-product" data-id="${p.id}">
+        <button class="btn btn-primary btn-open-product" data-id="${productId}">
           Ver detalhes
         </button>
       </div>
@@ -170,7 +187,9 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
 
     const imgs = (prod.imagens_por_cor || [])
       .flatMap((cor) =>
-        cor.imagens_cor.map((img) => (typeof img === "string" ? img : img.src))
+        (cor.imagens_cor || []).map((img) =>
+          typeof img === "string" ? img : img.src
+        )
       )
       .filter(Boolean);
 
@@ -316,7 +335,6 @@ async function initPage() {
     return db - da;
   });
 
-  // CORREÇÃO APLICADA AQUI
   const path = window.location.pathname;
   const isShopPage =
     path.endsWith("/shop") ||
@@ -324,17 +342,15 @@ async function initPage() {
     path.endsWith("/shop/");
 
   if (isShopPage) {
-    const categories = [
-      ...new Set(
-        (window.__produtos || []).map((p) => p.categoria).filter(Boolean)
-      ),
-    ].sort();
-    buildFilters(categories);
+    // MODIFICAÇÃO: Passa a lista de categorias para a função
+    buildFilters(window.__categorias || []);
     renderProdutos(window.__produtos, "__ALL__");
     initShopBanner();
   } else {
     // Homepage
-    const novidades = (window.__produtos || []).slice(0, 10);
+    const novidades = (window.__produtos || [])
+      .filter((p) => p.destaque)
+      .slice(0, 10);
     renderProdutos(novidades, "__ALL__");
   }
 }
