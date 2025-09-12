@@ -4,15 +4,16 @@ const glob = require("glob");
 
 console.log("Iniciando o script de construção...");
 
-// CORREÇÃO: Alterado 'loja' para 'usoella'
-const dataPath = path.join(__dirname, "..", "usoella", "data");
+// CORREÇÃO: Removida a referência à pasta 'usoella'
+const dataPath = path.join(__dirname, "..", "data");
 const productsSourceDir = path.join(dataPath, "produtos");
 const categoriesSourceDir = path.join(dataPath, "categorias");
 
 const productsOutputFile = path.join(dataPath, "produtos.json");
 const categoriesOutputFile = path.join(dataPath, "categorias.json");
 
-// Função para consolidar JSON de uma pasta para um arquivo
+// (O resto do arquivo continua exatamente o mesmo)
+
 async function consolidateJson(sourceDir, outputFile, wrapperKey) {
   try {
     const files = await glob.sync(path.join(sourceDir, "**/*.json"));
@@ -22,7 +23,6 @@ async function consolidateJson(sourceDir, outputFile, wrapperKey) {
     for (const file of files) {
       try {
         const content = await fs.readJson(file);
-        // Adiciona o slug (nome do arquivo sem extensão) como ID se não houver
         if (!content.id) {
           content.id = path.basename(file, ".json");
         }
@@ -41,23 +41,15 @@ async function consolidateJson(sourceDir, outputFile, wrapperKey) {
   }
 }
 
-// Executa as duas consolidações
 async function runBuild() {
-  // Garante que a pasta de dados exista
   await fs.ensureDir(dataPath);
-
-  // Consolida Categorias
   await consolidateJson(
     categoriesSourceDir,
     categoriesOutputFile,
     "categorias"
   );
-
-  // Consolida Produtos
   await consolidateJson(productsSourceDir, productsOutputFile, "produtos");
-
   console.log("Script de construção finalizado com sucesso!");
 }
 
 runBuild();
-//
