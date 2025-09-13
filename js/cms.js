@@ -22,7 +22,6 @@ async function fetchShopData() {
         ? categoriasData.categorias
         : [];
 
-      // A ordenação é mantida aqui
       categorias.sort((a, b) => (a.ordem || 999) - (b.ordem || 999));
       window.__categorias = categorias;
     } else {
@@ -395,24 +394,47 @@ function initNovidadesCarousel() {
 async function initPage() {
   await fetchShopData();
 
-  const allProductsSorted = (window.__produtos || []).sort((a, b) => {
-    const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-    const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-    return db - da;
-  });
-
   const path = window.location.pathname;
   const isHomePage =
     path === "/" || path.endsWith("/index.html") || path.endsWith("/home");
   const isShopPage = path.includes("/shop");
 
   if (isShopPage) {
+    // LÓGICA DE ORDENAÇÃO CORRIGIDA PARA A PÁGINA DA LOJA
+    const categoryOrderMap = new Map(
+      (window.__categorias || []).map((cat) => [cat.nome, cat.ordem || 999])
+    );
+
+    const allProductsSortedByCategory = (window.__produtos || []).sort(
+      (a, b) => {
+        const orderA = categoryOrderMap.get(a.categoria) || 999;
+        const orderB = categoryOrderMap.get(b.categoria) || 999;
+
+        if (orderA !== orderB) {
+          return orderA - orderB;
+        }
+
+        // Se as categorias forem iguais, ordena por data de criação (mais novo primeiro)
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA;
+      }
+    );
+
     buildFilters(window.__categorias || []);
-    renderProdutos(allProductsSorted, "__ALL__");
+    renderProdutos(allProductsSortedByCategory, "__ALL__");
     initShopBanner();
   } else if (isHomePage) {
-    const destaques = allProductsSorted.filter((p) => p.destaque === true);
-    const recentesNaoDestaques = allProductsSorted.filter(
+    const allProductsSortedByDate = (window.__produtos || []).sort((a, b) => {
+      const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return db - da;
+    });
+
+    const destaques = allProductsSortedByDate.filter(
+      (p) => p.destaque === true
+    );
+    const recentesNaoDestaques = allProductsSortedByDate.filter(
       (p) => p.destaque !== true
     );
 
