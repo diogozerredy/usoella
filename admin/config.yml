@@ -60,6 +60,7 @@ collections:
     slug: "{{slug}}"
     fields:
       - { label: "Nome da Categoria", name: "nome", widget: "string" }
+      - { label: "Ordem de Exibição", name: "ordem", widget: "number", default: 100, hint: "Use números menores para aparecer primeiro (ex: 1, 2, 3...)" }
 
   # NOVA COLEÇÃO DE PRODUTOS
   - name: "produtos"
@@ -96,3 +97,4 @@ collections:
       - { label: "Destaque na página inicial", name: "destaque", widget: "boolean", default: false }
       - { label: "Disponível para venda", name: "ativo", widget: "boolean", default: true }
       - { label: "Criado em", name: "createdAt", widget: "datetime" }
+

@@ -18,9 +18,12 @@ async function fetchShopData() {
     });
     if (categoriasRes.ok) {
       const categoriasData = await categoriasRes.json();
-      window.__categorias = Array.isArray(categoriasData.categorias)
+      let categorias = Array.isArray(categoriasData.categorias)
         ? categoriasData.categorias
         : [];
+      // ORDENAÇÃO DAS CATEGORIAS ADICIONADA AQUI
+      categorias.sort((a, b) => (a.ordem || 999) - (b.ordem || 999));
+      window.__categorias = categorias;
     } else {
       window.__categorias = [];
     }
@@ -303,23 +306,44 @@ function initShopBanner() {
   startAutoplay();
 }
 
+// ======================================================
+// FUNÇÃO DO CARROSSEL DE NOVIDADES CORRIGIDA
+// ======================================================
 function initNovidadesCarousel() {
   const track = document.querySelector(".carousel-track");
   const prevBtn = document.getElementById("novidades-prev");
   const nextBtn = document.getElementById("novidades-next");
+
   if (!track || !prevBtn || !nextBtn) return;
 
-  let index = 0;
-  const items = Array.from(track.children);
-  const totalItems = items.length;
+  let currentIndex = 0;
 
-  let itemsVisible = 4;
-  if (window.innerWidth <= 980) itemsVisible = 2;
-  if (window.innerWidth <= 600) itemsVisible = 1;
+  const updateCarousel = () => {
+    const items = Array.from(track.children);
+    if (items.length === 0) {
+      prevBtn.style.display = "none";
+      nextBtn.style.display = "none";
+      return;
+    }
 
-  const maxIndex = totalItems - itemsVisible;
+    let itemsVisible;
+    if (window.innerWidth <= 600) {
+      itemsVisible = 1;
+    } else if (window.innerWidth <= 980) {
+      itemsVisible = 2;
+    } else {
+      itemsVisible = 4;
+    }
 
-  function updateCarousel() {
+    const totalItems = items.length;
+    const maxIndex = Math.max(0, totalItems - itemsVisible);
+
+    // Garante que o índice não fique fora dos limites após redimensionar a tela
+    if (currentIndex > maxIndex) {
+      currentIndex = maxIndex;
+    }
+
+    // Esconde os botões se todos os itens já estiverem visíveis
     if (totalItems <= itemsVisible) {
       track.style.transform = "translateX(0)";
       prevBtn.style.display = "none";
@@ -330,40 +354,50 @@ function initNovidadesCarousel() {
     prevBtn.style.display = "flex";
     nextBtn.style.display = "flex";
 
+    // Calcula o deslocamento com base na largura do item e no espaçamento
     const itemWidth = items[0].getBoundingClientRect().width;
-    // Adiciona um pequeno espaçamento (gap) no cálculo se houver
     const gap = parseFloat(getComputedStyle(track).gap) || 0;
-    const offset = index * -(itemWidth + gap);
+    const offset = currentIndex * -(itemWidth + gap);
+
     track.style.transform = `translateX(${offset}px)`;
 
-    prevBtn.disabled = index === 0;
-    nextBtn.disabled = index >= maxIndex;
-  }
-
-  // Pequeno atraso para garantir que o layout foi calculado
-  setTimeout(() => {
-    updateCarousel();
-    window.addEventListener("resize", () => {
-      // Recalcula em caso de redimensionamento
-      if (window.innerWidth <= 980) itemsVisible = 2;
-      if (window.innerWidth <= 600) itemsVisible = 1;
-      updateCarousel();
-    });
-  }, 100);
+    // Ativa/desativa os botões conforme a posição
+    prevBtn.disabled = currentIndex === 0;
+    nextBtn.disabled = currentIndex >= maxIndex;
+  };
 
   prevBtn.addEventListener("click", () => {
-    if (index > 0) {
-      index--;
+    if (currentIndex > 0) {
+      currentIndex--;
       updateCarousel();
     }
   });
 
   nextBtn.addEventListener("click", () => {
-    if (index < maxIndex) {
-      index++;
+    // Recalcula o maxIndex aqui para garantir que está atualizado
+    const totalItems = track.children.length;
+    let itemsVisible;
+    if (window.innerWidth <= 600) itemsVisible = 1;
+    else if (window.innerWidth <= 980) itemsVisible = 2;
+    else itemsVisible = 4;
+    const maxIndex = Math.max(0, totalItems - itemsVisible);
+
+    if (currentIndex < maxIndex) {
+      currentIndex++;
       updateCarousel();
     }
   });
+
+  // Atualiza o carrossel quando a janela muda de tamanho
+  let resizeTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    // Espera um pouco para o navegador terminar de redimensionar antes de recalcular
+    resizeTimer = setTimeout(updateCarousel, 150);
+  });
+
+  // Roda a função uma vez no início para configurar o carrossel
+  setTimeout(updateCarousel, 100);
 }
 
 async function initPage() {
