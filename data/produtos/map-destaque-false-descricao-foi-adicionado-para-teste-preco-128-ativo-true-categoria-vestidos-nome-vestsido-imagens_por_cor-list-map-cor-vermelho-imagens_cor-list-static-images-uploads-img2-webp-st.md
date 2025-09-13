@@ -1,5 +1,5 @@
 ---
-nome: "VESTSIDO "
+nome: Vestido aberto
 descricao: FOI ADICIONADO PARA TESTE
 preco: 128
 categoria: VESTIDOS
