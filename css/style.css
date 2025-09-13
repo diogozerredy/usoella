@@ -89,13 +89,6 @@ img{ max-width: 100%; display:block; }
 }
 .nav a:hover{ opacity: .9; color: var(--secundary); }
 
-.menu-toggle span{
-  display:block;
-  height: 2px; width: 100%;
-  background: var(--ink-900);
-  margin: 7px 0;
-  transition: transform .25s ease, opacity .25s ease;
-}
 /* active */
 .menu-open .menu-toggle span:nth-child(1){ transform: translateY(9px) rotate(45deg); }
 .menu-open .menu-toggle span:nth-child(2){ opacity: 0; }
