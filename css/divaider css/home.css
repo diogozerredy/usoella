@@ -86,7 +86,14 @@
   grid-template-rows: auto 1fr;
   min-height: 0;
   align-items: start;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
 
 /* thumb unificada: posicionamento para setas + aspecto e limites */
 .card .thumb{
@@ -256,13 +263,11 @@
     overflow: hidden;
   }
 
-  .cards-grid.carousel-track {
+.cards-grid.carousel-track {
     display: flex;
-    padding: 2rem 0;
-    margin: 0;
-    gap: 0;
-    transition: transform 0.5s ease-in-out;
-  }
+    gap: 1.5rem; /* Espaçamento entre os cards */
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
 
   .carousel-track .card {
     flex: 0 0 25%;
