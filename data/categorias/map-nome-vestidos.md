@@ -1,3 +1,3 @@
 ---
-nome: VESTIDOS
+nome: Vestidos
 ---
