@@ -89,13 +89,6 @@ img{ max-width: 100%; display:block; }
 }
 .nav a:hover{ opacity: .9; color: var(--secundary); }
 
-/* Mobile toggle */
-.menu-toggle{
-  display:none;
-  width: 42px; height: 100vh;
-  border: 0; background: transparent; padding: 0;
-  cursor: pointer;
-}
 .menu-toggle span{
   display:block;
   height: 2px; width: 100%;
@@ -505,7 +498,6 @@ img{ max-width: 100%; display:block; }
     width: 100%; /* ocupa toda a largura possível */
   }
   .logo{ position: absolute; left: 50%; transform: translateX(-50%); }
-  .menu-toggle{ display: inline-block; position: absolute; left: 5px; }
   .nav{
     position: fixed;
     top: 0; left: 0;
