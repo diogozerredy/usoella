@@ -7,7 +7,6 @@
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   align-items: center;
-  gap: 2rem;
   padding: 2rem 2em 0 2rem;
 }
 .hero-copy{ padding-bottom: 2rem;}
@@ -51,7 +50,7 @@
 .hero-media img{
   border-radius: var(--radius-xl);
   object-fit: cover;
-  width: 16em;
+  /* width: 16em; */
   height: 100%;
 }
 
