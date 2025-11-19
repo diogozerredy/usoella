@@ -50,7 +50,6 @@
 .hero-media {display:flex; justify-content: center; }
 .hero-media img{
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-soft);
   object-fit: cover;
   width: 16em;
   height: 100%;
