@@ -97,7 +97,9 @@ img{ max-width: 100%; display:block; }
 /* =====================
    Hero / Banner
 ===================== */
-.overlay{ max-width: 1500px; width: 100%; }
+.overlay{ max-width: 1500px; width: 100%; display: flex;
+    flex-direction: column;
+    justify-content: space-between; }
 .hero{ background: var(--Primary); }
 .hero-grid{
   display: grid;
