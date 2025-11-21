@@ -570,3 +570,50 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 });
+document.addEventListener("DOMContentLoaded", function () {
+  const body = document.body;
+  const modals = Array.from(document.querySelectorAll(".cart-modal"));
+
+  function isModalOpen(modal) {
+    return !modal.classList.contains("hidden") && modal.offsetParent !== null;
+  }
+
+  function updateBodyLock() {
+    const anyOpen = modals.some(isModalOpen);
+    if (anyOpen) body.classList.add("modal-open");
+    else body.classList.remove("modal-open");
+  }
+
+  // Fecha modal quando clica no overlay (fora do conteúdo)
+  modals.forEach((modal) => {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.classList.add("hidden");
+        updateBodyLock();
+      }
+    });
+  });
+
+  // Fecha todos os modais com Esc
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      let changed = false;
+      modals.forEach((m) => {
+        if (isModalOpen(m)) {
+          m.classList.add("hidden");
+          changed = true;
+        }
+      });
+      if (changed) updateBodyLock();
+    }
+  });
+
+  // Observa alterações na classe dos modais (caso outros scripts somem/ponham 'hidden')
+  const observer = new MutationObserver(updateBodyLock);
+  modals.forEach((m) =>
+    observer.observe(m, { attributes: true, attributeFilter: ["class"] })
+  );
+
+  // Inicializa estado
+  updateBodyLock();
+});

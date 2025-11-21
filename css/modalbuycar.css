@@ -402,7 +402,7 @@
   #produto-modal .cart-modal-content {
     /* Ocupa mais da tela e tem um padding menor */
     width: calc(100% - 1.5rem);
-    max-height: calc(100vh - 1.5rem);
+    max-height: calc(90vh - 1.5rem);
   }
 
   /* Deixa a descrição com melhor espaçamento */
@@ -455,3 +455,11 @@
 
 /* pequenos ajustes estéticos */
 #produto-modal .cart-modal-content h4 { margin: 0 0 .5rem; }
+
+/* Evita que a página role quando um modal estiver aberto */
+body.modal-open {
+  overflow: hidden;
+  height: 100%;
+  touch-action: none; /* evita gestos de rolagem em touch */
+  -webkit-overflow-scrolling: auto;
+}

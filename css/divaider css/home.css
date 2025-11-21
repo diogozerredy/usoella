@@ -50,7 +50,7 @@
 .hero-media img{
   border-radius: var(--radius-xl);
   object-fit: cover;
-  /* width: 16em; */
+  width: 22em;
   height: 100%;
 }
 
