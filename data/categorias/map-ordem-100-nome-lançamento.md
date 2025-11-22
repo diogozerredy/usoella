@@ -1,4 +1,4 @@
 ---
-nome: Lançamento
-ordem: 100
+nome: Coleção BlackFriday
+ordem: 1
 ---
