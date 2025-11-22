@@ -34,7 +34,7 @@ body.shop {
 .hero-slide {
   position: relative;
   width: 100%;
-  height: clamp(480px, 70vh, 1000px); /* mínimo maior, até 70vh, máximo maior */
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,11 +100,11 @@ body.shop {
 
 /* ajustes responsivos */
 @media (max-width: 1024px) {
-  .hero-slide { height: clamp(300px, 45vh, 520px); }
+  .hero-slide { height: 100%;}
   .hero-nav { width: 44px; height: 44px; }
 }
 @media (max-width: 768px) {
-  .hero-slide { height: clamp(200px, 35vh, 320px); } /* Altura reduzida para melhor visualização em celulares */
+  .hero-slide { height: 100%; } /* Altura reduzida para melhor visualização em celulares */
   .hero-prev, .hero-next { width: 36px; height: 36px; }
 }
 
