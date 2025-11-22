@@ -1,5 +1,5 @@
 ---
-nome: "vestido aurora "
+nome: "Vestido aurora "
 descricao: |
   [Alfaitaria] minimalista, elegante e impecavel.
   veste do 36 ao 38.
