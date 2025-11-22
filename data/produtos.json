@@ -1,7 +1,7 @@
 {
   "produtos": [
     {
-      "destaque": false,
+      "destaque": true,
       "price": 125,
       "descricao": "sdjfalkj",
       "preco": 125,
