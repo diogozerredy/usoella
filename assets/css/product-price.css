@@ -1,0 +1,28 @@
+.product-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-family: inherit;
+}
+
+.product-price .old-price {
+  color: #7a7a7a;
+  text-decoration: line-through;
+  font-size: 0.95rem;
+}
+
+.product-price .new-price {
+  color: #111;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.product-price .discount-percent {
+  background: #ff4d4f;
+  color: #fff;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: 0.4rem;
+}

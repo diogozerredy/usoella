@@ -65,13 +65,14 @@ collections:
   # NOVA COLEÇÃO DE PRODUTOS
   - name: "produtos"
     label: "Produtos"
-    folder: "data/produtos"
+    folder: "data"
     create: true
     slug: "{{slug}}"
     fields:
       - { label: "Nome", name: "nome", widget: "string" }
       - { label: "Descrição", name: "descricao", widget: "text" }
       - { label: "Preço (R$)", name: "preco", widget: "number", value_type: "float", min: 0 }
+      - { label: "Preço Antigo", name: "old_price", widget: "number", value_type: "float", required: false }
       - label: "Categoria"
         name: "categoria"
         widget: "relation"
