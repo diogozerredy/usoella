@@ -30,6 +30,15 @@
         "p",
         "m"
       ]
+    },
+    {
+      "destaque": false,
+      "ativo": true,
+      "createdAt": "2025-11-22T22:22:13.054Z",
+      "nome": "gsdfg",
+      "descricao": "sdfgsdfg",
+      "preco": 49,
+      "categoria": "Coleção BlackFriday"
     }
   ]
 }
