@@ -9,9 +9,28 @@ async function fetchShopData() {
     });
     if (!produtosRes.ok) throw new Error("Falha ao carregar produtos.json");
     const produtosData = await produtosRes.json();
-    window.__produtos = Array.isArray(produtosData.produtos)
-      ? produtosData.produtos
-      : [];
+    // Suporta múltiplos formatos que o CMS pode gerar:
+    // - { "produtos": [ ... ] }
+    // - [ ... ] (array direto)
+    // - { "products": [ ... ] } ou { "items": [ ... ] }
+    let produtosArray = [];
+    if (Array.isArray(produtosData)) {
+      produtosArray = produtosData;
+    } else if (Array.isArray(produtosData.produtos)) {
+      produtosArray = produtosData.produtos;
+    } else if (Array.isArray(produtosData.products)) {
+      produtosArray = produtosData.products;
+    } else if (Array.isArray(produtosData.items)) {
+      produtosArray = produtosData.items;
+    } else {
+      produtosArray = [];
+    }
+    window.__produtos = produtosArray;
+    if (window.__produtos.length === 0) {
+      console.warn(
+        "Nenhum produto detectado em /data/produtos.json — verifique o formato do arquivo."
+      );
+    }
 
     const categoriasRes = await fetch("/data/categorias.json", {
       cache: "no-store",
