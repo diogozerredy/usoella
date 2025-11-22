@@ -105,25 +105,26 @@ function getProductThumbnail(p) {
 }
 
 function productCardHTML(p) {
+  const price = Number(p.preco ?? p.price ?? 0);
   const thumb = getProductThumbnail(p);
   const productId = p.id || `prod_${Math.random().toString(36).substr(2, 9)}`;
 
   return `
-     <article class="card" data-prod-id="${productId}">
-       <div class="thumb">
-         <button class="card-prev" aria-label="Imagem anterior" data-prod-id="${productId}">&#10094;</button>
-         <img class="card-thumb-img" src="${thumb}" alt="${p.nome || ""}">
-         <button class="card-next" aria-label="Próxima imagem" data-prod-id="${productId}">&#10095;</button>
-       </div>
-       <div class="card-body">
-         <h3>${p.nome || ""}</h3>
-         <div class="price" data-price-for="${productId}"></div>
-         <button class="btn btn-primary btn-open-product" data-id="${productId}">
-           Ver detalhes
-         </button>
-       </div>
-     </article>
-   `;
+    <article class="card" data-prod-id="${productId}">
+      <div class="thumb">
+        <button class="card-prev" aria-label="Imagem anterior" data-prod-id="${productId}">&#10094;</button>
+        <img class="card-thumb-img" src="${thumb}" alt="${p.nome || ""}">
+        <button class="card-next" aria-label="Próxima imagem" data-prod-id="${productId}">&#10095;</button>
+      </div>
+      <div class="card-body">
+        <h3>${p.nome || ""}</h3>
+        <div class="price">R$ ${price.toFixed(2)}</div>
+        <button class="btn btn-primary btn-open-product" data-id="${productId}">
+          Ver detalhes
+        </button>
+      </div>
+    </article>
+  `;
 }
 
 function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
@@ -139,40 +140,6 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
         );
 
   listEl.innerHTML = filtered.map(productCardHTML).join("");
-
-  // Garantir que o product-price seja renderizado DENTRO do placeholder .price
-  // (product-price.js exporta window.__renderPricesForAll)
-  if (typeof window.__renderPricesForAll === "function") {
-    // renderizar para o fragmento recém-inserido (mais preciso)
-    window.__renderPricesForAll(listEl);
-  }
-
-  // Pequena limpeza: se existirem .product-price fora da .price, mover para dentro da .price ou remover
-  setTimeout(() => {
-    listEl.querySelectorAll(".card").forEach((cardEl) => {
-      const placeholder = cardEl.querySelector(".price");
-      // captura todas as product-price dentro do card
-      const priceEls = Array.from(cardEl.querySelectorAll(".product-price"));
-      priceEls.forEach((pp) => {
-        if (placeholder) {
-          if (!placeholder.contains(pp)) {
-            // mover para placeholder (substitui conteúdo existente)
-            placeholder.innerHTML = "";
-            placeholder.appendChild(pp);
-          }
-        } else {
-          // sem placeholder, garantir que só exista UMA product-price por card (mantém a primeira)
-          const others = cardEl.querySelectorAll(".product-price");
-          if (others.length > 1) {
-            // remove extras que estejam fora do primeiro
-            others.forEach((o, i) => {
-              if (i > 0) o.remove();
-            });
-          }
-        }
-      });
-    });
-  }, 40);
 
   if (filtered.length === 0) {
     if (emptyEl) emptyEl.style.display = "block";
