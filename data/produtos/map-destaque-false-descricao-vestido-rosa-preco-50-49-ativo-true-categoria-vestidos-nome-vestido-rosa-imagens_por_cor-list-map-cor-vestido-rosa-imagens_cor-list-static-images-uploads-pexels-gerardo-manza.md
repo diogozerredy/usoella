@@ -11,6 +11,6 @@ tamanhos:
   - p
   - m
 destaque: false
-ativo: true
+ativo: false
 createdAt: 2025-09-13T02:57:28.866Z
 ---
