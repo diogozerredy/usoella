@@ -123,10 +123,23 @@ function getProductThumbnail(p) {
   return "https://via.placeholder.com/600x600?text=Produto";
 }
 
+// helper: cria slug previsível a partir do nome (usado quando produto não tem id)
+function slugify(str) {
+  if (!str) return "";
+  return String(str)
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036F]/g, "") // remove acentos
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-") // substitui não alfanum por hífen
+    .replace(/^-+|-+$/g, "");
+}
+
 function productCardHTML(p) {
   const price = Number(p.preco ?? p.price ?? 0);
   const thumb = getProductThumbnail(p);
-  const productId = p.id || `prod_${Math.random().toString(36).substr(2, 9)}`;
+  // usa id se existir, senão usa slug estável baseado no nome
+  const productId = p.id ? String(p.id) : slugify(p.nome || p.title || "");
 
   return `
     <article class="card" data-prod-id="${productId}">
@@ -169,9 +182,10 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
   listEl.querySelectorAll("button.btn-open-product").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const id = btn.dataset.id;
-      const prod = (window.__produtos || []).find(
-        (p) => String(p.id) === String(id)
-      );
+      const prod = (window.__produtos || []).find((p) => {
+        const pid = p.id ? String(p.id) : slugify(p.nome || p.title || "");
+        return String(pid) === String(id) || String(p.id) === String(id);
+      });
       if (!prod) {
         console.warn("Produto não encontrado para id", id);
         return;
@@ -186,9 +200,14 @@ function renderProdutos(produtosParaRenderizar, selectedCat = "__ALL__") {
 
   listEl.querySelectorAll(".card").forEach((cardEl) => {
     const prodId = cardEl.dataset.prodId;
-    const prod = (window.__produtos || []).find(
-      (p) => String(p.id) === String(prodId)
-    );
+    const prod = (window.__produtos || []).find((p) => {
+      const pid = p.id ? String(p.id) : slugify(p.nome || p.title || "");
+      return (
+        String(pid) === String(prodId) ||
+        String(p.id) === String(prodId) ||
+        slugify(p.nome || "") === String(prodId)
+      );
+    });
     if (!prod) return;
 
     const imgs = (prod.imagens_por_cor || [])
