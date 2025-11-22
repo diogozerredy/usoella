@@ -26,6 +26,24 @@ async function fetchShopData() {
       produtosArray = [];
     }
     window.__produtos = produtosArray;
+    // normaliza cada produto: slug estável e campo price numérico
+    function _ensureSlug(p) {
+      if (p.id) return String(p.id);
+      return String(p.nome || p.title || "")
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036F]/g, "") // remove acentos
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-") // substitui não alfanum por hífen
+        .replace(/^-+|-+$/g, "");
+    }
+    window.__produtos = window.__produtos.map((p) => {
+      const prod = Object.assign({}, p);
+      prod.slug = prod.slug || _ensureSlug(prod);
+      // normaliza price: prefere price, senão preco (e força número)
+      prod.price = Number(prod.price ?? prod.preco ?? 0);
+      return prod;
+    });
     if (window.__produtos.length === 0) {
       console.warn(
         "Nenhum produto detectado em /data/produtos.json — verifique o formato do arquivo."
@@ -128,10 +146,10 @@ function slugify(str) {
   if (!str) return "";
   return String(str)
     .normalize("NFKD")
-    .replace(/[\u0300-\u036F]/g, "") // remove acentos
+    .replace(/[\u0300-\u036F]/g, "") // removes accents
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9]+/g, "-") // substitui não alfanum por hífen
+    .replace(/[^a-z0-9]+/g, "-") // replace non-alphanum with hyphen
     .replace(/^-+|-+$/g, "");
 }
 

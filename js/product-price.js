@@ -8,10 +8,26 @@
     });
   }
 
+  // helper slugify (mesma lógica usada em cms.js)
+  function slugify(str) {
+    if (!str) return "";
+    return String(str)
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036F]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
   function createPriceElement(product) {
     var wrapper = document.createElement("div");
     wrapper.className = "product-price";
-    if (product.id) wrapper.setAttribute("data-product-id", product.id);
+    // expõe data-product-id usando id ou slug
+    var pid = product.id
+      ? String(product.id)
+      : product.slug || slugify(product.nome || product.title || "");
+    if (pid) wrapper.setAttribute("data-product-id", pid);
     var oldEl = document.createElement("span");
     oldEl.className = "old-price";
     var newEl = document.createElement("span");
@@ -30,18 +46,25 @@
     var newEl = priceEl.querySelector(".new-price");
     var discEl = priceEl.querySelector(".discount-percent");
 
-    newEl.textContent = formatBRL(product.price);
+    // preço normalizado: tenta product.price, senão product.preco
+    var currentPrice =
+      typeof product.price !== "undefined"
+        ? product.price
+        : typeof product.preco !== "undefined"
+        ? product.preco
+        : null;
+    newEl.textContent = formatBRL(currentPrice);
 
     if (
       product.old_price &&
       Number(product.old_price) > 0 &&
-      Number(product.old_price) > Number(product.price)
+      Number(product.old_price) > Number(currentPrice)
     ) {
       oldEl.textContent = formatBRL(product.old_price);
       oldEl.style.display = "";
       discEl.style.display = "";
       var percent = Math.round(
-        (1 - Number(product.price) / Number(product.old_price)) * 100
+        (1 - Number(currentPrice) / Number(product.old_price)) * 100
       );
       discEl.textContent = percent + "% OFF";
     } else {
@@ -217,7 +240,14 @@
       if (!window.__produtos) return null;
       return (
         window.__produtos.find(function (p) {
-          return p.id === id || p.slug === id || p.nome === id;
+          var pid = p.id
+            ? String(p.id)
+            : p.slug || slugify(p.nome || p.title || "");
+          return (
+            String(pid) === String(id) ||
+            String(p.id) === String(id) ||
+            String(p.nome) === String(id)
+          );
         }) || null
       );
     };
@@ -229,12 +259,38 @@
       return res.json();
     })
     .then(function (data) {
-      var products = data && data.produtos ? data.produtos : [];
+      // suporta vários formatos (array direto ou objeto com produtos/products/items)
+      var products = [];
+      if (Array.isArray(data)) products = data;
+      else if (Array.isArray(data.produtos)) products = data.produtos;
+      else if (Array.isArray(data.products)) products = data.products;
+      else if (Array.isArray(data.items)) products = data.items;
+      else products = [];
+
+      // normaliza: slug e price
+      products = products.map(function (p) {
+        var prod = Object.assign({}, p);
+        prod.slug = prod.slug || slugify(prod.nome || prod.title || "");
+        prod.price =
+          typeof prod.price !== "undefined"
+            ? Number(prod.price)
+            : typeof prod.preco !== "undefined"
+            ? Number(prod.preco)
+            : 0;
+        return prod;
+      });
       window.__produtos = products;
       window.__getProductById = function (id) {
         return (
           window.__produtos.find(function (p) {
-            return p.id === id || p.slug === id || p.nome === id;
+            var pid = p.id
+              ? String(p.id)
+              : p.slug || slugify(p.nome || p.title || "");
+            return (
+              String(pid) === String(id) ||
+              String(p.id) === String(id) ||
+              String(p.nome) === String(id)
+            );
           }) || null
         );
       };
