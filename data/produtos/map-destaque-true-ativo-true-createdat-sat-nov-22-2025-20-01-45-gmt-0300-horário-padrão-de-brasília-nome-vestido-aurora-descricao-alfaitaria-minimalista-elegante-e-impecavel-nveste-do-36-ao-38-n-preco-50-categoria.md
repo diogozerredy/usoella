@@ -9,8 +9,6 @@ imagens_por_cor:
   - imagens_cor:
       - /static/images/uploads/ea017da8-0247-40a3-abb5-ebffec63d297.jpg
     cor: Bege
-  - cor: preto
-    imagens_cor: []
 destaque: true
 ativo: true
 createdAt: 2025-11-22T23:01:45.223Z
