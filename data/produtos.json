@@ -1,13 +1,15 @@
 {
   "produtos": [
     {
-      "destaque": false,
+      "id": "123",
+      "nome": "reste",
       "descricao": "sdjfalkj",
       "preco": 125,
       "old_price": 189.9,
-      "ativo": true,
+      "ativo": false,
+      "destaque": false,
       "categoria": "Camisetas",
-      "nome": "reste",
+      "tamanhos": ["p", "m"],
       "imagens_por_cor": [
         {
           "cor": "vermelho",
@@ -24,9 +26,17 @@
           ]
         }
       ],
-      "id": "123",
-      "createdAt": "2025-09-11T18:45:06.030Z",
-      "tamanhos": ["p", "m"]
+      "variacoes_esgotadas": [
+        {
+          "cor": "vermelho",
+          "tamanho": "p"
+        },
+        {
+          "cor": "verde",
+          "tamanho": "M"
+        }
+      ],
+      "createdAt": "2025-09-11T18:45:06.030Z"
     }
   ]
 }

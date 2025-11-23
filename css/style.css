@@ -470,6 +470,34 @@ img{ max-width: 100%; display:block; }
   border-radius: 8px;
   flex-shrink: 0;
 }
+.card .thumb {
+  position: relative; /* Garante que a etiqueta fique dentro da foto */
+}
+
+.badge-esgotado {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #333; /* Fundo escuro */
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Texto de Aviso no Modal */
+#aviso-esgotado-texto {
+  color: #d32f2f; /* Vermelho alerta */
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 0.9rem;
+}
 /* =====================
    Responsividade
 ===================== */
@@ -591,5 +619,6 @@ img{ max-width: 100%; display:block; }
   }
   .card .thumb .card-prev { left: 6px; right: auto; }
   .card .thumb .card-next { right: 6px; left: auto; }
+
   
 }

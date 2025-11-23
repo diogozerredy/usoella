@@ -16,15 +16,12 @@ function showNotification(message, success = true, requireAction = false) {
     !notificationMessage ||
     !notificationIcon ||
     !okButton
-  ) {
-    console.error("Elementos do modal de notificação não encontrados.");
+  )
     return;
-  }
 
   notificationMessage.textContent = message;
-
-  // Define o ícone
   notificationIcon.className = "";
+
   if (success) {
     notificationIcon.classList.add("fas", "fa-check-circle", "success-icon");
   } else {
@@ -35,23 +32,18 @@ function showNotification(message, success = true, requireAction = false) {
     );
   }
 
-  // Decide se mostra o botão ou usa o temporizador
   if (requireAction) {
-    okButton.style.display = "block"; // Mostra o botão OK
+    okButton.style.display = "block";
   } else {
-    okButton.style.display = "none"; // Esconde o botão OK
-
-    // Limpa qualquer temporizador anterior e cria um novo
+    okButton.style.display = "none";
     clearTimeout(notificationTimeout);
     notificationTimeout = setTimeout(() => {
       notificationModal.classList.add("hidden");
-    }, 1000); // Fecha o modal após 2 segundos
+    }, 1000);
   }
-
   notificationModal.classList.remove("hidden");
 }
 
-// Evento para fechar o modal de notificação via botão OK
 document
   .getElementById("notification-alert-ok-btn")
   ?.addEventListener("click", () => {
@@ -59,9 +51,6 @@ document
       .getElementById("notification-alert-modal")
       ?.classList.add("hidden");
   });
-// ==========================
-// MENU MOBILE
-// ==========================
 const toggle = document.querySelector(".menu-toggle");
 const header = document.querySelector(".site-header");
 const menu = document.querySelector("#primary-nav");
@@ -87,13 +76,6 @@ document.addEventListener("click", (e) => {
 });
 
 menu?.addEventListener("click", (e) => e.stopPropagation());
-
-document.getElementById("cta-comprar")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  document
-    .getElementById("novidades")
-    ?.scrollIntoView({ behavior: "smooth", block: "start" });
-});
 
 // ==========================
 // CARRINHO - LOCALSTORAGE
@@ -267,21 +249,77 @@ function updateFloatingCart() {
   countEl.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
 }
 
-// ==========================
-// MODAL DE PRODUTO
-// ==========================
 let selectedProduct = null;
 let selectedColor = null;
 let selectedSize = null;
 let selectedImageIndex = 0;
-// MODIFICAÇÃO: 'modalImages' agora guarda objetos com src e cor
 let modalImages = [];
+
+// Função principal que verifica o estoque e muda o botão
+function updateButtonState() {
+  const btn = document.getElementById("confirmar-compra");
+  const avisoTexto = document.getElementById("aviso-esgotado-texto"); // Pega o elemento novo
+  const product = selectedProduct;
+
+  // Limpa aviso anterior
+  if (avisoTexto) avisoTexto.textContent = "";
+
+  // 1. Se não selecionou tudo
+  if (!selectedColor || !selectedSize) {
+    btn.disabled = true;
+    btn.textContent = "Selecione as opções";
+    btn.style.background = "";
+    btn.style.opacity = "0.6";
+    return;
+  }
+
+  btn.disabled = false;
+  btn.style.opacity = "1";
+
+  // Função auxiliar para ativar modo esgotado
+  const setSoldOutMode = () => {
+    setButtonToInterest(btn);
+    if (avisoTexto) {
+      avisoTexto.textContent = "⚠️ Item esgotado! Entre na lista de espera.";
+    }
+  };
+
+  // 2. Verifica Esgotamento Geral
+  if (product.esgotado_geral === true) {
+    setSoldOutMode();
+    return;
+  }
+
+  // 3. Verifica Esgotamento Específico
+  const isVariantSoldOut = (product.variacoes_esgotadas || []).some((v) => {
+    const vCor = (v.cor || "").trim().toLowerCase();
+    const vTam = (v.tamanho || "").trim().toLowerCase();
+    const sCor = (selectedColor || "").trim().toLowerCase();
+    const sTam = (selectedSize || "").trim().toLowerCase();
+    return vCor === sCor && vTam === sTam;
+  });
+
+  if (isVariantSoldOut) {
+    setSoldOutMode();
+  } else {
+    // Disponível
+    btn.textContent = "Adicionar ao carrinho";
+    btn.style.background = "var(--secundary)";
+    btn.dataset.action = "add_cart";
+  }
+}
+
+// Configura o botão para o modo "Avise-me" (WhatsApp)
+function setButtonToInterest(btn) {
+  btn.textContent = "Avise-me quando chegar 🔔";
+  btn.style.background = "var(--Primary)"; // Sua cor rosa/principal para destacar
+  btn.dataset.action = "interest";
+}
 
 function updateModalImage(index) {
   const img = document.getElementById("modal-produto-img");
   if (!img || !modalImages || modalImages.length === 0) return;
 
-  // Garante que o índice esteja dentro dos limites
   if (index < 0) index = modalImages.length - 1;
   if (index >= modalImages.length) index = 0;
   selectedImageIndex = index;
@@ -289,13 +327,14 @@ function updateModalImage(index) {
   const currentImageInfo = modalImages[selectedImageIndex];
   img.src = currentImageInfo.src || "";
 
-  // MODIFICAÇÃO: Atualiza a cor selecionada com base na imagem
+  // Atualiza seleção visual da cor
   selectedColor = currentImageInfo.cor;
   document.querySelectorAll("#modal-cores .opcao-btn").forEach((b) => {
     b.classList.toggle("ativo", b.dataset.color === selectedColor);
   });
 
-  checkConfirm();
+  // IMPORTANTE: Checa o estoque sempre que a imagem/cor muda
+  updateButtonState();
 }
 
 function openProductModal(product) {
@@ -314,13 +353,13 @@ function openProductModal(product) {
   const tamanhosContainer = document.getElementById("modal-tamanhos");
 
   nome.textContent = product.nome;
-  // --- INÍCIO DA NOVA LÓGICA DE PREÇO ---
+
+  // Renderiza Preço (com lógica de desconto)
   const currentPrice = Number(product.preco || product.price || 0);
   const oldPrice = Number(product.old_price || 0);
 
   if (oldPrice > currentPrice) {
     const percent = Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
-    // Usa o mesmo HTML e classes do CSS que criamos (product-price.css)
     preco.innerHTML = `
       <div class="product-price" style="justify-content: start;">
         <span class="old-price">R$ ${oldPrice
@@ -330,17 +369,16 @@ function openProductModal(product) {
           .toFixed(2)
           .replace(".", ",")}</span>
         <span class="discount-percent">${percent}% OFF</span>
-      </div>
-    `;
+      </div>`;
   } else {
-    // Preço normal
     preco.innerHTML = `<div class="product-price" style="justify-content: start;"><span class="new-price">R$ ${currentPrice
       .toFixed(2)
       .replace(".", ",")}</span></div>`;
   }
+
   descricao.textContent = product.descricao || "";
 
-  // MODIFICAÇÃO: Constrói uma lista única de imagens com suas cores associadas
+  // Prepara imagens
   (product.imagens_por_cor || []).forEach((group) => {
     (group.imagens_cor || []).forEach((imageSrc) => {
       modalImages.push({
@@ -350,7 +388,6 @@ function openProductModal(product) {
     });
   });
 
-  // Renderiza a primeira imagem e define a primeira cor como ativa
   if (modalImages.length > 0) {
     img.src = modalImages[0].src;
     selectedColor = modalImages[0].cor;
@@ -358,36 +395,31 @@ function openProductModal(product) {
     img.src = "https://via.placeholder.com/200";
   }
 
-  // Renderiza os botões de cores
+  // Botões de Cores
   coresContainer.innerHTML = "";
   const productColors = product.imagens_por_cor || [];
-
   if (productColors.length > 0) {
     productColors.forEach((corGroup) => {
       const btn = document.createElement("button");
       btn.textContent = corGroup.cor;
       btn.className = "opcao-btn";
       btn.dataset.color = corGroup.cor;
-
-      // MODIFICAÇÃO: Ao clicar na cor, pula para a primeira imagem daquela cor
       btn.onclick = () => {
         const firstImageIndexOfColor = modalImages.findIndex(
           (img) => img.cor === corGroup.cor
         );
-        if (firstImageIndexOfColor !== -1) {
+        if (firstImageIndexOfColor !== -1)
           updateModalImage(firstImageIndexOfColor);
-        }
       };
       coresContainer.appendChild(btn);
     });
-    // Ativa o botão da primeira cor
-    updateModalImage(0);
+    updateModalImage(0); // Seleciona a primeira cor
   } else {
     coresContainer.innerHTML = "<small>Cor única</small>";
     selectedColor = "Única";
   }
 
-  // Renderiza tamanhos (sem alteração)
+  // Botões de Tamanhos
   tamanhosContainer.innerHTML = "";
   if (product.tamanhos?.length > 0) {
     product.tamanhos.forEach((tamanho) => {
@@ -400,7 +432,7 @@ function openProductModal(product) {
           .querySelectorAll("#modal-tamanhos .opcao-btn")
           .forEach((b) => b.classList.remove("ativo"));
         btn.classList.add("ativo");
-        checkConfirm();
+        updateButtonState(); // Checa estoque ao clicar no tamanho
       };
       tamanhosContainer.appendChild(btn);
     });
@@ -409,13 +441,15 @@ function openProductModal(product) {
     selectedSize = "Único";
   }
 
-  // Controles do carrossel (agora funcionam desde o início)
+  // Setas do Carrossel
   const prevBtn = modal.querySelector(".carousel-prev");
   const nextBtn = modal.querySelector(".carousel-next");
+  // Clona para remover eventos antigos
   const newPrev = prevBtn.cloneNode(true);
   const newNext = nextBtn.cloneNode(true);
   prevBtn.parentNode.replaceChild(newPrev, prevBtn);
   nextBtn.parentNode.replaceChild(newNext, nextBtn);
+
   newPrev.addEventListener("click", () =>
     updateModalImage(selectedImageIndex - 1)
   );
@@ -423,7 +457,7 @@ function openProductModal(product) {
     updateModalImage(selectedImageIndex + 1)
   );
 
-  checkConfirm();
+  updateButtonState(); // Garante estado inicial correto
   modal.classList.remove("hidden");
 }
 
@@ -431,23 +465,29 @@ function closeProductModal() {
   document.getElementById("produto-modal").classList.add("hidden");
 }
 
-function checkConfirm() {
-  const btn = document.getElementById("confirmar-compra");
-  btn.disabled = !(selectedColor && selectedSize);
-}
+// AÇÃO DO CLIQUE NO BOTÃO
+document.getElementById("confirmar-compra")?.addEventListener("click", (e) => {
+  const btn = e.target;
 
-document
-  .getElementById("close-produto-modal")
-  ?.addEventListener("click", closeProductModal);
-document.getElementById("confirmar-compra")?.addEventListener("click", () => {
   if (!selectedColor || !selectedSize) {
     showNotification("Por favor, selecione cor e tamanho.", false);
     return;
   }
-  if (!selectedProduct) {
-    alert("Nenhum produto selecionado.");
+
+  // Ação 1: Tenho Interesse (WhatsApp)
+  if (btn.dataset.action === "interest") {
+    const phone = "5585992781259";
+    const text =
+      `Olá! Tenho interesse no produto *${selectedProduct.nome}*.\n` +
+      `Vi que a opção *${selectedColor} / ${selectedSize}* está esgotada no site.\n` +
+      `Poderia me avisar se houver reposição?`;
+
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
     return;
   }
+
+  // Ação 2: Adicionar ao Carrinho (Normal)
   const cart = loadCart();
   const id = `${selectedProduct.id}-${selectedColor}-${selectedSize}`;
   const existing = cart.find((p) => p.id === id);
@@ -461,7 +501,7 @@ document.getElementById("confirmar-compra")?.addEventListener("click", () => {
     cart.push({
       id,
       name: selectedProduct.nome,
-      price: selectedProduct.preco,
+      price: Number(selectedProduct.preco || selectedProduct.price),
       qty: 1,
       thumb: currentThumb,
       cor: selectedColor,
@@ -470,11 +510,15 @@ document.getElementById("confirmar-compra")?.addEventListener("click", () => {
   }
   saveCart(cart);
   updateFloatingCart();
-  renderCart();
-  renderCartModal();
+  if (typeof renderCart === "function") renderCart();
+  if (typeof renderCartModal === "function") renderCartModal();
   closeProductModal();
   showNotification("Produto adicionado ao carrinho!");
 });
+
+document
+  .getElementById("close-produto-modal")
+  ?.addEventListener("click", closeProductModal);
 
 // ==========================
 // MODAL DO CARRINHO

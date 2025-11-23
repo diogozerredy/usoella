@@ -98,4 +98,15 @@ collections:
       - { label: "Destaque na página inicial", name: "destaque", widget: "boolean", default: false }
       - { label: "Disponível para venda", name: "ativo", widget: "boolean", default: true }
       - { label: "Criado em", name: "createdAt", widget: "datetime" }
+      - { label: "Esgotado (Produto Inteiro)", name: "esgotado_geral", widget: "boolean", default: false, required: false }
+      - label: "Variações Esgotadas (Específico)"
+        name: "variacoes_esgotadas"
+        widget: "list"
+        required: false
+        summary: "{{fields.cor}} - {{fields.tamanho}}"
+        fields:
+          - { label: "Cor Esgotada", name: "cor", widget: "string", hint: "Digite exatamente igual ao cadastro da cor (Ex: Preto)" }
+          - { label: "Tamanho Esgotado", name: "tamanho", widget: "string", hint: "Digite exatamente igual ao cadastro do tamanho (Ex: M)" }
+          - { label: "ID (Opcional)", name: "id", widget: "string", required: false }
+      - { label: "Data Criação", name: "createdAt", widget: "datetime" }
 
