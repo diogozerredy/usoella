@@ -68,7 +68,6 @@ collections:
     folder: "data/produtos"
     create: true
     slug: "{{slug}}"
-    summary: "{{title}} - {{preco}}"
     fields:
       - { label: "Nome", name: "nome", widget: "string" }
       - { label: "Descrição", name: "descricao", widget: "text" }
