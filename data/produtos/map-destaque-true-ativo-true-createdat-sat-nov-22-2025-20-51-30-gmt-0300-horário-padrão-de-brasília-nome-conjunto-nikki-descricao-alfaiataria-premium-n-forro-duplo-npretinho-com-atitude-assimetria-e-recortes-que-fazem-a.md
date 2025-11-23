@@ -6,6 +6,7 @@ descricao: |-
   Pretinho com Atitude! Assimetria e recortes que fazem a diferença.
   Veste do 36 ao 38
 preco: 59.99
+esgotado_geral: true
 categoria: Coleçao BlackFriday
 imagens_por_cor:
   - cor: Preto
