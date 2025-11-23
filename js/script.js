@@ -314,7 +314,30 @@ function openProductModal(product) {
   const tamanhosContainer = document.getElementById("modal-tamanhos");
 
   nome.textContent = product.nome;
-  preco.textContent = `R$ ${product.preco.toFixed(2)}`;
+  // --- INÍCIO DA NOVA LÓGICA DE PREÇO ---
+  const currentPrice = Number(product.preco || product.price || 0);
+  const oldPrice = Number(product.old_price || 0);
+
+  if (oldPrice > currentPrice) {
+    const percent = Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
+    // Usa o mesmo HTML e classes do CSS que criamos (product-price.css)
+    preco.innerHTML = `
+      <div class="product-price" style="justify-content: start;">
+        <span class="old-price">R$ ${oldPrice
+          .toFixed(2)
+          .replace(".", ",")}</span>
+        <span class="new-price">R$ ${currentPrice
+          .toFixed(2)
+          .replace(".", ",")}</span>
+        <span class="discount-percent">${percent}% OFF</span>
+      </div>
+    `;
+  } else {
+    // Preço normal
+    preco.innerHTML = `<div class="product-price" style="justify-content: start;"><span class="new-price">R$ ${currentPrice
+      .toFixed(2)
+      .replace(".", ",")}</span></div>`;
+  }
   descricao.textContent = product.descricao || "";
 
   // MODIFICAÇÃO: Constrói uma lista única de imagens com suas cores associadas
