@@ -1,0 +1,35 @@
+.product-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-family: inherit;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  margin-bottom: 0.3em;
+}
+
+.product-price .old-price {
+  color: #7a7a7a;
+  text-decoration: line-through;
+  font-size: 0.9rem;
+}
+
+.product-price .new-price {
+  color: #111;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.product-price .discount-percent {
+  display: inline-block;
+  background: #ff4d4f;
+  color: #fff;
+  padding: 0.06rem 0.32rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  margin-left: 0.2rem;
+  position: relative;
+  top: -1px;
+}

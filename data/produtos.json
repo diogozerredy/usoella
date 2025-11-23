@@ -4,6 +4,7 @@
       "destaque": false,
       "descricao": "sdjfalkj",
       "preco": 125,
+      "old_price": 189.9,
       "ativo": true,
       "categoria": "Camisetas",
       "nome": "reste",
@@ -25,10 +26,7 @@
       ],
       "id": "123",
       "createdAt": "2025-09-11T18:45:06.030Z",
-      "tamanhos": [
-        "p",
-        "m"
-      ]
+      "tamanhos": ["p", "m"]
     }
   ]
 }

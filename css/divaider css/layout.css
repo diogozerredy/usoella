@@ -108,6 +108,8 @@
   .hero-grid {
     padding: 1.5rem 1rem 0;
     gap: 1rem;
+    display: flex;
+    flex-direction: column;
   }
   .hero-media{justify-content: center; align-content: center; display: flex; order: 2; /* imagem embaixo */
     width: 100%; /* ocupa toda a largura possível */}

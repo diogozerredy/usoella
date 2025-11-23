@@ -105,9 +105,39 @@ function getProductThumbnail(p) {
 }
 
 function productCardHTML(p) {
-  const price = Number(p.preco || 0);
+  const price = Number(p.preco || p.price || 0);
+  const oldPrice = Number(p.old_price || 0);
   const thumb = getProductThumbnail(p);
-  const productId = p.id || `prod_${Math.random().toString(36).substr(2, 9)}`;
+  // Garante um ID
+  const productId = p.id
+    ? String(p.id)
+    : p.nome
+    ? p.nome.toLowerCase().replace(/\s+/g, "-")
+    : "prod";
+
+  // Lógica do Preço: Verifica se tem desconto
+  let priceHtml = "";
+  if (oldPrice > price) {
+    // Calcula porcentagem
+    const percent = Math.round(((oldPrice - price) / oldPrice) * 100);
+
+    priceHtml = `
+      <div class="product-price">
+        <span class="old-price">R$ ${oldPrice
+          .toFixed(2)
+          .replace(".", ",")}</span>
+        <span class="new-price">R$ ${price.toFixed(2).replace(".", ",")}</span>
+        <span class="discount-percent">${percent}% OFF</span>
+      </div>
+    `;
+  } else {
+    // Preço normal sem desconto
+    priceHtml = `
+      <div class="product-price">
+        <span class="new-price">R$ ${price.toFixed(2).replace(".", ",")}</span>
+      </div>
+    `;
+  }
 
   return `
     <article class="card" data-prod-id="${productId}">
@@ -118,7 +148,9 @@ function productCardHTML(p) {
       </div>
       <div class="card-body">
         <h3>${p.nome || ""}</h3>
-        <div class="price">R$ ${price.toFixed(2)}</div>
+        
+        ${priceHtml}
+        
         <button class="btn btn-primary btn-open-product" data-id="${productId}">
           Ver detalhes
         </button>
