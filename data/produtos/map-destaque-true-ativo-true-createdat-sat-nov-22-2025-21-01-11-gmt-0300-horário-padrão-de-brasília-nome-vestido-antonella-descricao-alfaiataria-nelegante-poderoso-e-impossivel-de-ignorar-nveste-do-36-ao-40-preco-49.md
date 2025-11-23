@@ -5,6 +5,7 @@ descricao: |-
   Elegante, poderoso e Impossivel de ignorar.
   Veste do 36 ao 40.
 preco: 49.99
+old_price: 69.99
 categoria: Coleçao BlackFriday
 imagens_por_cor:
   - cor: Vermelho
