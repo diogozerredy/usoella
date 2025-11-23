@@ -12,7 +12,7 @@ imagens_por_cor:
   - imagens_cor:
       - /static/images/uploads/photo-2025-11-19-14-45-39.jpg
     cor: Preto
-destaque: true
+destaque: false
 ativo: true
 createdAt: 2025-11-22T23:01:45.223Z
 ---
