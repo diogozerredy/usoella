@@ -9,7 +9,7 @@ imagens_por_cor:
   - cor: Bege
     imagens_cor:
       - /static/images/uploads/photo-2025-11-19-13-27-11.jpg
-destaque: true
+destaque: false
 ativo: true
 createdAt: 2025-11-23T00:10:10.900Z
 ---
