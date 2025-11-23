@@ -5,6 +5,7 @@ descricao: |-
   Novo nivel de Sofisticaçao!simplesmente perfeito 
   Veste um 38 ao 40.
 preco: 69.99
+old_price: 89.47
 categoria: Coleçao BlackFriday
 imagens_por_cor:
   - cor: "Rosa Bebe "
