@@ -1,9 +1,10 @@
 ---
-nome: "Vestido aurora "
+nome: "Vestido Aurora "
 descricao: |
   [Alfaitaria] minimalista, elegante e impecavel.
   veste do 36 ao 38.
-preco: 50
+preco: 45.9
+old_price: 59.9
 categoria: Coleçao BlackFriday
 imagens_por_cor:
   - imagens_cor:
