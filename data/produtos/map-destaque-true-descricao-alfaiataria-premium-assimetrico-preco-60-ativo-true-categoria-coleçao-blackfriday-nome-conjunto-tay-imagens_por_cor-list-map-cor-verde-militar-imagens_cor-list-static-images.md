@@ -2,7 +2,7 @@
 nome: Conjunto Tay
 descricao: Alfaiataria Premium Assimetrico
 preco: 54.9
-old_price: 66
+old_price: 64.9
 categoria: Coleçao BlackFriday
 imagens_por_cor:
   - cor: Verde Militar
