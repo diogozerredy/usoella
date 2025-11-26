@@ -191,7 +191,6 @@
 }
 .sobre-media img{
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-soft);
   padding: 0 .3rem;
   width: 12em;
   height: auto;
