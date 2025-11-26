@@ -3,7 +3,8 @@ nome: Vestido Luna
 descricao: |-
   Romântico, feminino e Super versátil.
   Veste do 36 ao 38
-preco: 59.99
+preco: 44.9
+old_price: 59.9
 categoria: Coleçao BlackFriday
 imagens_por_cor:
   - cor: Bege
