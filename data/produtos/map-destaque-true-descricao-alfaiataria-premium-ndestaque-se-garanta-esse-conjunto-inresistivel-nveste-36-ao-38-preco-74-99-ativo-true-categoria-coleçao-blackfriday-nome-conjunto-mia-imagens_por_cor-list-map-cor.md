@@ -4,7 +4,8 @@ descricao: |-
   Alfaiataria Premium
   Destaque-se! Garanta esse Conjunto Inresistivel
   Veste 36 ao 38
-preco: 74.99
+preco: 69.99
+old_price: 84.99
 categoria: Coleçao BlackFriday
 imagens_por_cor:
   - cor: Vermelho
